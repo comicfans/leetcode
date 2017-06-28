@@ -1,3 +1,4 @@
+
 #include <string>
 #include <algorithm>
 #include <iterator>
@@ -81,3 +82,29 @@ public:
     }
 
 };
+
+
+
+int main(int argc, char *argv[])
+{
+    Solution a;
+
+    auto result = a.partition("aab");
+
+
+
+    cout<<"[\n";
+    for(auto &v:result){
+
+        cout<<"[";
+
+        for(auto &k:v){
+            cout<<"\""<<k<<"\",";
+        }
+
+        cout<<"]\n";
+    }
+    cout<<"]\n";
+
+    return 0;
+}
