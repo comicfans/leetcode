@@ -95,30 +95,36 @@ impl <'a> Hash for Range<'a> {
 }
 
 impl <'a> PartialEq for Range<'a> {
-    fn eq(&self, other: &Rhs) -> bool {
+    fn eq(&self, other: &Self) -> bool {
             if self.end_idx - self.begin_idx != other.end_idx - other.begin_idx {
                 return false;
             }
+            //
+            for i in 0 .. self.end_idx - self.begin_idx{
+                if self.nums[self.begin_idx + i] != other.nums[other.begin_idx + i] {
+                    return false;
+                }
+            }
 
-
+            true
     }
 }
 
-struct Solution{}
+pub struct Solution{}
 
 impl Solution {
     pub fn count_distinct(nums: Vec<i32>, k: i32, p: i32) -> i32 {
 
             let div_pos = nums.iter().enumerate().filter(|(_, &x)| x % p == 0).map(|(idx, _)| idx).collect::<BTreeSet<usize>>();
 
-            let unique_sets = HashMap::new();
+            let mut unique_sets = HashMap::new();
 
             for begin_idx in 0.. nums.len(){
                 for end_idx in begin_idx + 1 .. nums.len()+1 {
 
                     let div_range = div_pos.range((Included(&begin_idx), Excluded(&end_idx)));
 
-                    if div_range.count() as _ > k {
+                    if div_range.count() as i32 > k {
                         break;
                     }
 
@@ -133,7 +139,7 @@ impl Solution {
 
                     let vec = unique_sets.entry(this_hash).or_insert(Vec::new());
 
-                    match vec.iter().position(|&r| r == new_range){
+                    match vec.iter().position(|r| r == &new_range){
                         Some(_)=>{
                             continue;
                         }
@@ -146,9 +152,7 @@ impl Solution {
                 }
             }
 
-
-
-            unique_sets.iter().map(|(_,v) v.len()|).sum::<usize>() as i32
+            unique_sets.iter().map(|(_,v)| v.len()).sum::<usize>() as i32
     }
 }
 }
@@ -176,6 +180,18 @@ mod tests{
         let vec = vec![3,4,2,3,4,7];
 
         assert_eq!(Solution::minimum_card_pickup(vec), 4);
+       
+    }
+
+    #[test]
+    fn test_case_2261(){
+        use crate::l2261::Solution;
+
+        let vec = vec![2,3,3,2,2];
+        assert_eq!(Solution::count_distinct(vec,2,2), 11);
+
+        let vec = vec![1,2,3,4];
+        assert_eq!(Solution::count_distinct(vec,4,1), 10);
        
     }
 }
