@@ -157,6 +157,50 @@ impl Solution {
 }
 }
 
+mod l2748{
+
+    pub struct Solution;
+
+impl Solution {
+    pub fn count_beautiful_pairs(nums: Vec<i32>) -> i32 {
+            let mut ret = 0;
+
+            for begin_idx in 0.. nums.len()-1{
+                for end_idx in begin_idx + 1 .. nums.len() {
+
+                    let mut begin_number = {
+                        let mut temp = nums[begin_idx];
+                        
+                        while temp >= 10 {
+                            temp/=10;
+                        }
+                        temp
+                    };
+
+                    let mut end_number = nums[end_idx] % 10;
+
+                    let mut try_gcd = begin_number.min(end_number);
+
+                    while try_gcd != 1{
+                        let reminder = begin_number.max(end_number) % try_gcd;
+
+                        if reminder == 0{
+                            break;
+                        }
+
+                        begin_number= begin_number.min(end_number);
+                        end_number = try_gcd;
+                        try_gcd = reminder;
+                    }
+
+                    ret += if try_gcd == 1 {1} else {0};
+                }
+            }
+            ret
+    }
+}
+
+}
 
 fn main() {
     println!("Hello, world!");
@@ -192,6 +236,21 @@ mod tests{
 
         let vec = vec![1,2,3,4];
         assert_eq!(Solution::count_distinct(vec,4,1), 10);
+       
+    }
+
+    #[test]
+    fn test_case_2748(){
+        use crate::l2748::Solution;
+
+        let vec = vec![2,5,1,4];
+        assert_eq!(Solution::count_beautiful_pairs(vec), 5);
+
+        let vec = vec![11,21,12];
+        assert_eq!(Solution::count_beautiful_pairs(vec), 2);
+
+        let vec = vec![1799,259,1453,374,1854,2212,2104,2221];
+        assert_eq!(Solution::count_beautiful_pairs(vec), 23);
        
     }
 }
