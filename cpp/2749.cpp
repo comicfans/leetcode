@@ -56,7 +56,7 @@ public:
             }
 
             int binary_1s = 0;
-            while((diff >0 ) && (binary_1s < try_number)){
+            while((diff >0 ) & (binary_1s < try_number)){
                 binary_1s += (diff %2 );
                 diff = diff / 2;
             }
@@ -74,4 +74,5 @@ int main(){
     Solution s;
     cout<<s.makeTheIntegerZero(3, -2)<<endl;
     cout<<s.makeTheIntegerZero(5, 7)<<endl;
+    cout<<s.makeTheIntegerZero(112577768,-501662198)<<endl;
 }

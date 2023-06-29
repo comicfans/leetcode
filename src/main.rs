@@ -202,6 +202,45 @@ impl Solution {
 
 }
 
+mod l2749{
+
+    pub struct Solution;
+
+impl Solution {
+    pub fn make_the_integer_zero(num1: i32, num2: i32) -> i32 {
+
+
+            for try_number in  1.. 60+1 {
+
+                let mut diff = num1 as i64 - num2 as i64 * try_number as i64;
+
+                if diff < 1 {
+                    return -1;
+                }
+
+                if diff < try_number{
+                    continue;
+                }
+
+                let mut binary_1s = 0 as i32;
+                while (diff > 0) & (binary_1s < try_number as i32) {
+                    binary_1s += (diff %2) as i32;
+                    diff = diff / 2;
+                }
+
+                if diff == 0 {
+                    return try_number as i32;
+                }
+
+            }
+            -1
+        }
+
+
+}
+
+}
+
 fn main() {
     println!("Hello, world!");
 }
@@ -252,5 +291,14 @@ mod tests{
         let vec = vec![1799,259,1453,374,1854,2212,2104,2221];
         assert_eq!(Solution::count_beautiful_pairs(vec), 23);
        
+    }
+
+    #[test]
+    fn test_case_2749(){
+        use crate::l2749::Solution;
+
+        assert_eq!(Solution::make_the_integer_zero(5, 7), -1);
+        assert_eq!(Solution::make_the_integer_zero(3, -2), 3);
+        assert_eq!(Solution::make_the_integer_zero(112577768,-501662198), 16);
     }
 }
