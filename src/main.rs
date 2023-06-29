@@ -241,6 +241,41 @@ impl Solution {
 
 }
 
+mod l2750{
+
+    pub struct Solution;
+
+impl Solution {
+    pub fn number_of_good_subarray_splits(nums: Vec<i32>) -> i32 {
+
+            let mut last_1_pos:i32 = -1;
+            let mut ret: u64 = 0;
+
+            for i in 0.. nums.len() {
+                if nums[i] != 1 {
+                    continue;
+                }
+
+                if last_1_pos == -1 {
+                    last_1_pos = i as i32;
+                    ret = 1;
+                    continue;
+                }
+
+                let not1_count_p1 = i as i32 - last_1_pos;
+                last_1_pos = i as i32;
+
+                ret = ret * not1_count_p1 as u64 % 1000000007;
+        
+            }
+            return ret as i32;
+    }
+
+
+}
+
+}
+
 fn main() {
     println!("Hello, world!");
 }
@@ -300,5 +335,13 @@ mod tests{
         assert_eq!(Solution::make_the_integer_zero(5, 7), -1);
         assert_eq!(Solution::make_the_integer_zero(3, -2), 3);
         assert_eq!(Solution::make_the_integer_zero(112577768,-501662198), 16);
+    }
+
+    #[test]
+    fn test_case_2750(){
+        use crate::l2750::Solution;
+
+        assert_eq!(Solution::number_of_good_subarray_splits(vec![0,1,0,0,1]), 3);
+        assert_eq!(Solution::number_of_good_subarray_splits(vec![0,1,0]), 1);
     }
 }
