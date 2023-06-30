@@ -276,6 +276,76 @@ impl Solution {
 
 }
 
+mod l2751 {
+    pub struct Solution;
+
+    struct Info{
+        id: usize,
+        hp: i32,
+        dir: char
+    }
+
+impl Solution {
+    pub fn survived_robots_healths(positions: Vec<i32>, healths: Vec<i32>, directions: String) -> Vec<i32> {
+
+            let mut infos :Vec<Info>= (0..positions.len()).zip(healths.iter()).zip(directions.chars()).map(|((id,hp),dir)|Info{
+                id,
+                hp:*hp,
+                dir
+            }).collect();
+
+            infos.sort_by(|a,b| positions[a.id].cmp(& positions[b.id]));
+
+            let mut last_survived_pos: i32 = 0;
+            let mut current_pos: usize = 1;
+
+            while current_pos < infos.len() {
+                if last_survived_pos < 0{
+                    last_survived_pos = current_pos as _;
+                    current_pos += 1;
+                    continue;
+                }
+
+                if infos[last_survived_pos as usize].hp == 0 {
+                    last_survived_pos-=1;
+                    continue;
+                }
+
+
+                if infos[current_pos].dir == infos[last_survived_pos as usize].dir || (infos[current_pos].dir == 'R') {
+                    last_survived_pos = current_pos as _;
+                    current_pos+=1;
+                    continue;
+                }
+
+                if infos[current_pos].hp < infos[last_survived_pos as usize].hp {
+                    infos[last_survived_pos as usize].hp -= 1;
+                    infos[current_pos].hp = 0;
+                    current_pos += 1;
+                    continue;
+                }
+
+                if infos[current_pos].hp == infos[last_survived_pos as usize].hp {
+                    infos[current_pos].hp = 0;
+                    infos[last_survived_pos as usize].hp = 0;
+                    current_pos += 1;
+                }else{
+                    infos[last_survived_pos as usize].hp = 0;
+                    infos[current_pos].hp -= 1;
+                }
+
+                last_survived_pos -= 1;
+            }
+
+            infos.sort_by(|a, b| a.id.cmp(&b.id));
+            
+        
+            let ret = infos.iter().filter(|e|e.hp > 0).map(|e|e.hp).collect();
+            ret
+    }
+}
+}
+
 fn main() {
     println!("Hello, world!");
 }
@@ -343,5 +413,26 @@ mod tests{
 
         assert_eq!(Solution::number_of_good_subarray_splits(vec![0,1,0,0,1]), 3);
         assert_eq!(Solution::number_of_good_subarray_splits(vec![0,1,0]), 1);
+    }
+
+    #[test]
+    fn test_case_2751(){
+        use crate::l2751::Solution;
+
+        assert_eq!(Solution::survived_robots_healths(vec![5,4,3,2,1],
+                                                     vec![2,17,9,15,10],String::from("RRRRR")),
+                   vec![2,17,9,15,10]);
+
+        assert_eq!(Solution::survived_robots_healths(vec![3,5,2,6],
+                                                     vec![10,10,15,12],String::from("RLRL")),
+                   vec![14]);
+
+        assert_eq!(Solution::survived_robots_healths(vec![1,2,5,6],
+                                                     vec![10,10,11,11],String::from("RLRL")),
+                   vec![]);
+
+        assert_eq!(Solution::survived_robots_healths(vec![11,44,16],
+                                                     vec![1,20,17],String::from("RLR")),
+                   vec![18]);
     }
 }

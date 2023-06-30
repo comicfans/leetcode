@@ -1,5 +1,6 @@
 #include<vector>
 #include<set>
+#include<algorithm>
 #include<map>
 #include<cassert>
 #include <iostream>
@@ -10,110 +11,81 @@ public:
 
     struct Info{
         int id;
-        int health;
+        int hp;
         char dir;
     };
-
-    struct Pack{
-        char dir;
-        vector<pair<int,int>> id_health;
-    };
-    
 
     vector<int> survivedRobotsHealths(vector<int>& positions, vector<int>& healths, string directions) {
 
-
-        std::map<int, Info> pos_ordered;
-
-        for(int id = 0; id < healths.size(); ++id){
-            pos_ordered[positions[id]] = Info{ id, healths[id], directions[id]};
+        vector<Info> infos;
+        for(int i =0;i<positions.size();++i){
+            infos.push_back({i, healths[i], directions[i]});
         }
 
-        // regroup
-        vector<Pack> regroup;
-        for(const auto& kv: pos_ordered){
-            if (regroup.empty()){
-                    regroup.push_back(Pack{
-                        kv.second.dir,
-                        vector<pair<int,int>>{{kv.second.id, kv.second.health}}
-                    });
-                    continue;
-            }
+        std::sort(infos.begin(),infos.end(),
+             [&positions](const Info &a, const Info &b){
+                return positions[a.id] < positions[b.id];
+        });
 
-            //has left group, checking if we should merge it, or collide it
 
-            auto last_pos = regroup.end();
-            --last_pos;
+        int last_survived_pos = 0;
+        for(int current_pos = 1; current_pos < infos.size();){
 
-            if(last_pos->dir == kv.second.dir){
-                //do merge
-                last_pos->id_health.push_back({kv.second.id, kv.second.health});
+
+            if(last_survived_pos < 0) {
+                last_survived_pos = current_pos;
+                ++current_pos;
                 continue;
             }
 
-            if(kv.second.dir== 'R'){
-                //create new group
-                regroup.push_back(Pack{
-                        kv.second.dir,
-                        vector<pair<int,int>>{{kv.second.id, kv.second.health}}
-                });
+            auto& last_survived = infos[last_survived_pos];
+            if(last_survived.hp == 0){
+                --last_survived_pos;
                 continue;
             }
 
-            //do collide until no left no more ,or right no more
+            auto& current = infos[current_pos];
+
+            if ((current.dir == last_survived.dir) | (current.dir == 'R')){
+                last_survived_pos = current_pos;
+                ++current_pos;
+                continue;
+            }
+
+
+            if (current.hp < last_survived.hp ){
+                last_survived.hp -= 1;
+                current.hp = 0;
+                ++current_pos;
+                continue;
+            }
 
             
-            int right_hp = kv.second.health;
-            do{
-                auto &to_collide = last_pos->id_health.back();
+            if(current.hp == last_survived.hp){
+                current.hp = 0;
+                last_survived.hp = 0;
+                ++current_pos;
+            }else{
+                last_survived.hp = 0;
+                current.hp -= 1;
+            }
 
-                int collide_health = to_collide.second;
+            --last_survived_pos;
+        }
 
-                if(collide_health > right_hp){
-                    to_collide.second -= 1;
-                    assert(to_collide.second != 0);
-                    right_hp = 0;
-                    break;
-                }
+        sort(infos.begin(),infos.end(),[](const Info &a, const Info &b){
+            return a.id < b.id;
+        });
 
-                if(collide_health == right_hp){
-                    right_hp = 0;
-                }else{
-                    right_hp -= 1;
-                }
-
-                //old collide remove
-                last_pos->id_health.pop_back();
-                if(last_pos->id_health.empty()){
-                    regroup.pop_back();
-                    break;
-                }
-            }while(right_hp > 0);
-
-            if(right_hp > 0){
-                regroup.push_back(Pack{
-                    kv.second.dir,
-                    vector<pair<int,int>>{{kv.second.id, right_hp}}
-                });
+        std::vector<int> ret;
+        for(const auto& info: infos){
+            if(info.hp){
+            ret.push_back(info.hp);
             }
         }
 
-        // now reorder by id
-        std::map<int, int> id_health;
-
-        for(const auto& v: regroup){
-
-            for(const auto &left: v.id_health){
-                id_health[left.first] = left.second;
-            }
-        }
-
-        std::vector<int> health;
-        for(auto &kv: id_health){
-            health.push_back(kv.second);
-        }
-
-        return health;
+        return ret;
+    
     }
 };
 
