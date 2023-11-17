@@ -55,49 +55,57 @@ public:
 
         auto idx = nonZeroPos - all.begin();
 
-        set<pair<int,int>> from_to_try;
         if(delta < 0){
             // output too many, should remove one edge that to thisPos
 
             assert(edgeNumber.count(idx));
+
+
             for(const auto& v:edgeNumber[idx]){
                 if(v.second>0){
-                    from_to_try.insert({idx, v.first});
+            //take this out of graph
+                    edgeNumber.at(idx).at(v.first)--;
+                    all[idx]++;
+                    all[v.first]--;
+        
+                    int thisTry = pickSet(all,edgeNumber,to_from, alreadyPicked+1, bestOfAll);
+                    bestOfAll = min(bestOfAll, thisTry);
+        
+                    all[idx]--;
+                    all[v.first]++;
+                    edgeNumber.at(idx).at(v.first)++;
                 }
             }
 
-        }else{
+            return bestOfAll;
+
+        }
             //find reverse 
-            auto pos = to_from.find(idx);
-            if(pos != to_from.end()){
-                for(const auto& v: pos->second){
-                    assert(edgeNumber.at(v).at(idx)>=0);
-                    if(edgeNumber.at(v).at(idx)==0){
-                        continue;
-                    }
-                    from_to_try.insert({v,idx});
-                    assert(edgeNumber.at(v).count(idx));
-                }
-            }
+        auto pos = to_from.find(idx);
+
+        if(pos == to_from.end()){
+            return bestOfAll;
         }
 
-        for(const auto tryThis: from_to_try){
+        for(const auto& v: pos->second){
+            assert(edgeNumber.at(v).at(idx)>=0);
+            if(edgeNumber.at(v).at(idx)==0){
+                continue;
+            }
+            assert(edgeNumber.at(v).count(idx));
 
-            assert(edgeNumber.at(tryThis.first).at(tryThis.second) > 0);
-            assert(to_from.at(tryThis.second).count(tryThis.first));
-
-            //take this out of graph
-            edgeNumber.at(tryThis.first).at(tryThis.second)--;
-            all[tryThis.first]++;
-            all[tryThis.second]--;
-
+            edgeNumber.at(v).at(idx)--;
+            all[v]++;
+            all[idx]--;
+        
             int thisTry = pickSet(all,edgeNumber,to_from, alreadyPicked+1, bestOfAll);
             bestOfAll = min(bestOfAll, thisTry);
-
-            all[tryThis.first]--;
-            all[tryThis.second]++;
-            edgeNumber.at(tryThis.first).at(tryThis.second)++;
+        
+            all[v]--;
+            all[idx]++;
+            edgeNumber.at(v).at(idx)++;
         }
+
         //try to pick one to make it 
         return bestOfAll;
     }
