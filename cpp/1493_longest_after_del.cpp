@@ -54,17 +54,18 @@ public:
             }
 
 
-            if(onePos < (int)rle.size()-1){
-                //has right zero
-                currentBest = max(currentBest, rle[onePos].second);
+            if(onePos >= (int)rle.size() - 2){
+                if(onePos < (int)rle.size()-1){
+                    //has right zero
+                    currentBest = max(currentBest, rle[onePos].second);
+                }
+
+                if((onePos < (int)rle.size()-2)&& (rle[onePos+1].second == 1)){
+                    int mergeRight = rle[onePos].second + rle[onePos+2].second;
+
+                    currentBest = max(currentBest, mergeRight);
+                }
             }
-
-            if((onePos < (int)rle.size()-2)&& (rle[onePos+1].second == 1)){
-                int mergeRight = rle[onePos].second + rle[onePos+2].second;
-
-                currentBest = max(currentBest, mergeRight);
-            }
-
             bestOfAll = max(bestOfAll, currentBest);
         }
         
