@@ -19,57 +19,63 @@ public:
         }
 
 
-        vector<pair<int,int>> numberIdx;
-        numberIdx.resize(costs.size());
-        for(int i = 0;i<costs.size();++i){
-            numberIdx[i].first = costs[i];
-            numberIdx[i].second = i;
-        }
+        int begin = 0;
 
-        sort(numberIdx.begin(), numberIdx.end(), [](auto lhs, auto rhs){
-            return lhs > rhs;
-        });
+        int end = costs.size();
 
-        //search from back
-        //
-        int leftPick = 0;
-        int rightPick = 0;
         long long total = 0;
+        for(int hire=0; hire <k ; ++hire){
 
-        for(int i = 0; i< k;++i){
-            if(numberIdx.size() <= candidates){
-                for(int j= 0;j< k-i;++j){
-                    total+= numberIdx[numberIdx.size()-1 - j].first;
-                }
+            if(costs.size()-hire <= candidates * 2){
+                //left ones can be merged together
+                sort(costs.begin()+begin,costs.begin()+end);
+                total += accumulate(costs.begin()+begin,costs.begin()+begin + k-hire, (long long)0);
                 break;
             }
 
+            if(hire == 0){
+                sort(costs.begin(),costs.begin()+ candidates);
+                sort(costs.end() - candidates, costs.end(),[](auto lhs,auto rhs){
+                return lhs > rhs;
+                });
+            }
 
-            //search from right to left, find first element which second is < can + leftPick
-            //or >= size - candidates - rightPick
-
-            for(int idx = numberIdx.size()-1;idx>=0; --idx){
-                bool found = false;
-                if(numberIdx[idx].second < candidates + leftPick){
-                    found = true;
-                    ++leftPick;
-                } else if(numberIdx[idx].second >= costs.size() - rightPick - candidates){
-                    found = true;
-                    ++rightPick;
+            if(costs[begin] <= costs[end - 1]){
+                total+=costs[begin];
+                ++begin;
+                //pick left first
+                if(candidates==1){
+                    continue;
+                }
+                    
+                int newAdd = costs[begin+candidates-1];
+                if(newAdd<costs[begin]){
+                    copy(costs.begin()+begin,costs.begin()+begin+candidates-1, costs.begin()+begin+1);
+                    costs[begin] = newAdd;
+                }else{
+                    sort(costs.begin()+begin,costs.begin()+begin + candidates);
                 }
 
-                if(found){
-                    total+= numberIdx[idx].first;
-                    copy(numberIdx.begin()+idx+1, numberIdx.end(), numberIdx.begin()+idx);
-                    numberIdx.pop_back();
-                    break;
+                continue;
+            }
+
+            total+=costs[end - 1];
+            --end;
+            if(candidates>1){
+                int newAdd = costs[end - candidates];
+                if(newAdd < costs[end]){
+                    copy(costs.begin()+end - candidates+1, costs.begin()+end, costs.begin()+end - candidates);
+                    costs[end - 1] = newAdd;
+                }else{
+                    sort(costs.begin() + end - candidates, costs.begin() + end,[](auto lhs,auto rhs){return lhs > rhs;});
                 }
             }
         }
+        
 
         return total;
-
     }
+
 
     long long slow(vector<int>& costs, int k, int candidates) {
 
@@ -108,6 +114,8 @@ public:
     }
 };
 
+#include "parse.h"
+
 int main(){
     Solution s;
     {
@@ -139,6 +147,20 @@ int main(){
         int k = 7;
         int candidates = 12;
         assert(s.totalCost(costs,k,candidates) == 95);
+
+    }
+    {
+        auto costs = pvi("2462_hire.case1",0);
+        int k = 52220;
+        int candidates = 725;
+        s.totalCost(costs, k ,candidates);
+
+    }
+    {
+        auto costs = pvi("2462_hire.case2",0);
+        int k = 60000;
+        int candidates = 20000;
+        s.totalCost(costs, k ,candidates);
 
     }
 }
