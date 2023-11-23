@@ -24,83 +24,56 @@ public:
         int end = costs.size();
 
         long long total = 0;
-        for(int hire=0; hire <k;){
 
-            if(costs.size()-hire <= candidates * 2){
+        vector<pair<int,int>> possible;
+
+        for(int hire=0; hire <k; ++hire){
+
+            
+
+            if(hire == 0){
+                for(int i = 0;i< candidates;++i){
+                    possible.push_back({costs[i],0});
+                }
+
+                for(int i=0; i< min<int>(candidates, costs.size() - candidates);++i){
+                    possible.push_back({costs[costs.size()-1-i],1});
+                }
+                sort(possible.begin(),possible.end(),[](auto lhs, auto rhs){return lhs > rhs;});
+                
+            }
+
+            if(end - begin <= candidates * 2){
                 //left ones can be merged together
-                sort(costs.begin()+begin,costs.begin()+end);
-                total += accumulate(costs.begin()+begin,costs.begin()+begin + k-hire, (long long)0);
+                for(int i = 0;i< k - hire; ++i){
+                    total += possible[possible.size()-1-i].first;
+                }
                 break;
             }
 
-            if(hire == 0){
-                sort(costs.begin(),costs.begin()+ candidates);
-                sort(costs.end() - candidates, costs.end(),[](auto lhs,auto rhs){
-                return lhs > rhs;
-                });
-            }
-
-            if(costs[begin] <= costs[end - 1]){
-
-                if(costs[begin] == 1){
-                    //pick as many as possible because this is min value
-                    auto end = upper_bound(costs.begin()+begin,costs.begin() + begin + candidates, 1);
-                    auto consume = min<int>(end - (costs.begin()+begin), k - hire);
-                    total += consume;
-                    begin += consume;
-                    hire += consume;
-                    sort(costs.begin()+begin, costs.begin()+begin+candidates);
-                    continue;
-                }
-
-
-                ++hire;
-                total+=costs[begin];
+            pair<int,int> minElement = possible.back();
+            total += minElement.first;
+            possible.pop_back();
+            pair<int,int> newAdd;
+            if(minElement.second == 0){
                 ++begin;
-                //pick left first
-                if(candidates==1){
-                    continue;
-                }
-                    
-                int newAdd = costs[begin+candidates-1];
-                if(newAdd<costs[begin]){
-                    copy(costs.begin()+begin,costs.begin()+begin+candidates-1, costs.begin()+begin+1);
-                    costs[begin] = newAdd;
-                }else{
-                    sort(costs.begin()+begin,costs.begin()+begin + candidates);
-                }
-
-                continue;
+                newAdd = {costs[begin + candidates -1],0};
+            }else{
+                --end;
+                newAdd = {costs[end - candidates],1};
             }
 
-            if(costs[end - 1] == 1){
-                auto lowerBound = lower_bound(costs.begin()+end - candidates, costs.begin()+end,1, [](auto lhs,auto rhs){
-                    return lhs>rhs;
-                });
-                auto same = costs.begin()+end - lowerBound;
-                int consume = min<int>(same, k-hire);
-                total += consume;
-                end -= consume;
-                hire += consume;
+            auto insertPos = upper_bound(possible.begin(),possible.end(),newAdd, [](auto lhs,auto rhs){return lhs>rhs;});
 
-                sort(costs.begin() + end - candidates, costs.begin()+end, [](auto lhs,auto rhs){
-                    return lhs > rhs;
-                });
-                continue;
-            }
+            possible.insert(insertPos, newAdd);
+ 
+            //vector<int> copy;
+            //transform(possible.begin(),possible.end(),back_inserter(copy),[](auto& v){return v.first;});
+            //sort(copy.begin(),copy.end(),[](auto lhs, auto rhs){return lhs > rhs;});
+            //for(int i =0;i< copy.size();++i){
+            //    assert(copy[i] == possible[i].first);
+            //}
 
-            ++hire;
-            total+=costs[end - 1];
-            --end;
-            if(candidates>1){
-                int newAdd = costs[end - candidates];
-                if(newAdd < costs[end]){
-                    copy(costs.begin()+end - candidates+1, costs.begin()+end, costs.begin()+end - candidates);
-                    costs[end - 1] = newAdd;
-                }else{
-                    sort(costs.begin() + end - candidates, costs.begin() + end,[](auto lhs,auto rhs){return lhs > rhs;});
-                }
-            }
         }
         
 
@@ -150,6 +123,12 @@ public:
 int main(){
     Solution s;
     {
+        vector<int> costs= {31,25,72,79,74,65,84,91,18,59,27,9,81,33,17,58};
+        int k = 11;
+        int candidates = 2;
+        assert(s.totalCost(costs,k,candidates) == 423);
+    }
+    {
         vector<int> costs = {17,12,10,2,7,2,11,20,8};
         int k = 3;
         int candidates = 4;
@@ -194,4 +173,5 @@ int main(){
         s.totalCost(costs, k ,candidates);
 
     }
+    
 }
