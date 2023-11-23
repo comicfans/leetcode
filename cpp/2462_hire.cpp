@@ -24,7 +24,7 @@ public:
         int end = costs.size();
 
         long long total = 0;
-        for(int hire=0; hire <k ; ++hire){
+        for(int hire=0; hire <k;){
 
             if(costs.size()-hire <= candidates * 2){
                 //left ones can be merged together
@@ -41,6 +41,20 @@ public:
             }
 
             if(costs[begin] <= costs[end - 1]){
+
+                if(costs[begin] == 1){
+                    //pick as many as possible because this is min value
+                    auto end = upper_bound(costs.begin()+begin,costs.begin() + begin + candidates, 1);
+                    auto consume = min<int>(end - (costs.begin()+begin), k - hire);
+                    total += consume;
+                    begin += consume;
+                    hire += consume;
+                    sort(costs.begin()+begin, costs.begin()+begin+candidates);
+                    continue;
+                }
+
+
+                ++hire;
                 total+=costs[begin];
                 ++begin;
                 //pick left first
@@ -59,6 +73,23 @@ public:
                 continue;
             }
 
+            if(costs[end - 1] == 1){
+                auto lowerBound = lower_bound(costs.begin()+end - candidates, costs.begin()+end,1, [](auto lhs,auto rhs){
+                    return lhs>rhs;
+                });
+                auto same = costs.begin()+end - lowerBound;
+                int consume = min<int>(same, k-hire);
+                total += consume;
+                end -= consume;
+                hire += consume;
+
+                sort(costs.begin() + end - candidates, costs.begin()+end, [](auto lhs,auto rhs){
+                    return lhs > rhs;
+                });
+                continue;
+            }
+
+            ++hire;
             total+=costs[end - 1];
             --end;
             if(candidates>1){
