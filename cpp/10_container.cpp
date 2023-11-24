@@ -24,6 +24,10 @@ public:
 
             for(int j = i+1;j < height.size();++j){
                 int right = height[j];
+                if((right> left+1) && (right < height[j-1])){
+                    continue;
+                }
+                
 
                 int thisArea = min(left,right) * (j - i);
                 if(thisArea > ret){
