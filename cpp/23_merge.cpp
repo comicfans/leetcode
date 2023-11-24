@@ -23,36 +23,52 @@ public:
 
     ListNode* mergeKLists(vector<ListNode*>& lists) {
 
+        if(lists.size()==1){
+            return lists[0];
+        }
+
         ListNode * head = nullptr;
         ListNode * tail = nullptr;
 
-        while(!lists.empty()){
+        bool hasValue = true;
+        while(hasValue){
 
-            vector<ListNode*> nonull;
-            copy_if(lists.begin(),lists.end(), back_inserter(nonull),[](auto p){return bool(p);});
-            
-            if(nonull.empty()){
-                break;
-            }
             
             int minVal = numeric_limits<int>::max();
-            int minIdx = 0;
-            for(int i = 0;i < nonull.size();++i){
-                if(nonull[i]->val < minVal){
+            int minIdx = -1;
+            int emptyNumber =0 ;
+            for(int i = 0;i < lists.size();++i){
+                if(!lists[i]){
+                    ++emptyNumber;
+                    continue;
+                }
+
+                if(lists[i]->val < minVal){
                     minIdx = i;
-                    minVal = nonull[i]->val;
+                    minVal = lists[i]->val;
                 }
             }
 
+            hasValue = (minIdx != -1);
+
+            if(!hasValue){
+                break;
+            }
+
+
+
             if(!head){
-                head = nonull[minIdx];
-                nonull[minIdx] = nonull[minIdx]->next;
-                lists = nonull;
+                if(!hasValue){
+                    return nullptr;
+                }
+
+                head = lists[minIdx];
+                lists[minIdx] = lists[minIdx]->next;
                 continue;
             }
 
-            auto newTail = nonull[minIdx];
-            nonull[minIdx] = nonull[minIdx]->next;
+            auto newTail = lists[minIdx];
+            lists[minIdx] = lists[minIdx]->next;
 
             if(!tail){
                 head->next = newTail;
@@ -63,11 +79,10 @@ public:
             }
 
 
-            if(nonull.size()==1){
+            if(emptyNumber == lists.size() - 1){
                 break;
             }
 
-            lists = nonull;
         }
 
         return head;
@@ -96,5 +111,10 @@ int main(){
             cout<<res->val<<endl;
             res = res->next;
         }
+    }
+    {
+        ListNode v1(1);
+        vector<ListNode*> l{&v1};
+        s.mergeKLists(l);
     }
 }
