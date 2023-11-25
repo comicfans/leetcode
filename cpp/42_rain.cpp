@@ -10,6 +10,30 @@ class Solution {
 public:
     int trap(vector<int>& height) {
 
+        //throw from left, if is equal or greator
+
+        int leftBegin = 0;
+        for(int throwLeft = 1;throwLeft < height.size();++throwLeft){
+            if(height[throwLeft]>= height[throwLeft - 1]){
+                leftBegin = throwLeft;
+            }else{
+                break;
+            }
+        }
+
+        auto end = height.erase(height.begin(),height.begin()+leftBegin);
+
+        int rightEnd = height.size();
+        //throw from right, if is equal or greator
+        for(int throwRight = height.size()-2; throwRight >= 0;--throwRight){
+            if(height[throwRight]> height[throwRight+1]){
+                rightEnd = throwRight+1;
+            }else{
+                break;
+            }
+        }
+        height.resize(rightEnd);
+
 
         vector<int> sortHeight = height;
         sort(sortHeight.begin(),sortHeight.end());
@@ -60,7 +84,17 @@ int main(){
 
     Solution s;
     {
+        vector<int> input = {9,6,8,8,5,6,3};
+        s.trap(input);
+    }
+    {
+        vector<int> input = {0,7,1,4,6};
+        assert(s.trap(input) == 7);
+    }
+    {
         vector<int> input = {0,1,0,2,1,0,1,3,2,1,2,1};
         assert(s.trap(input) == 6);
     }
+    
+    
 }
