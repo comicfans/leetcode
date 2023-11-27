@@ -14,16 +14,7 @@ public:
             return false;
         }
 
-        if(s == goal){
-            //find if any duplicate chars
-
-            sort(s.begin(),s.end());
-            auto end = unique(s.begin(),s.end());
-            if(end == s.end()){
-                return false;
-            }
-            return true;
-        }
+        
 
 
         vector<int> diffPos ;
@@ -35,6 +26,19 @@ public:
                 }
                 continue;
             }
+        }
+
+        if(diffPos.empty()){
+            //find if any duplicate chars
+            vector<int> count(26);
+            for(int i=0;i<s.size();++i){
+                int idx = s[i] - 'a';
+                count[idx]++;
+                if(count[idx]>1){
+                    return true;
+                }
+            }
+            return false;
         }
 
         if(diffPos.size()!=2){
