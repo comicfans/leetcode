@@ -10,9 +10,13 @@ using namespace std;
 class Solution {
 public:
 
-    vector<vector<int>> cache;
 
     int knightDialer(int n) {
+
+        if(n == 1){
+            return 10;
+        }
+
 
         vector<vector<int>> pad;
         for(int i = 0;i<3;++i){
@@ -67,35 +71,31 @@ public:
             }
         }
 
-        if(cache.empty() ){
-            for(int i =0;i<=9;++i){
-                cache.push_back({1,(int)fromTo[i].size()});
-            }
-        }
-
-        for(auto& c: cache){
-            c.reserve(n-1);
+        vector<int> lastCount(10);
+        for(int i =0;i<=9;++i){
+            lastCount[i] = fromTo[i].size();
         }
 
 
-        for(int step = cache[0].size(); step <=n; ++step){
+
+        vector<int> thisStep(10);
+        for(int step = 2; step <n; ++step){
             for(int i = 0;i<=9;++i){
-
                 long long total = 0;
                 for(auto v: fromTo[i]){
-                    total+= cache[v][step - 1];
+                    total+= lastCount[v];
                     total %= ((long long)pow(10,9)+7);
                 }
 
 
-                cache[i].push_back(total);
+                thisStep[i]=total;
             }
+            swap(lastCount, thisStep);
         }
 
-
         long long ret = 0;
-        for(const auto& v: cache){
-            ret+= v[n-1];
+        for(const auto& v: lastCount){
+            ret+= v;
             ret %= ((long long)pow(10,9)+7);
         }
 
