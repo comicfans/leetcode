@@ -25,7 +25,8 @@ public:
 
         pad.push_back({-1,0,-1});
 
-        map<int,set<int>> fromTo;
+        vector<vector<int>> fromTo;
+        fromTo.resize(10);
 
 
 
@@ -40,6 +41,12 @@ public:
 
                     for(int sign:{-1,1}){
 
+                        int fromNum = pad[y][x];
+
+                        if(fromNum == -1){
+                            continue;
+                        }
+
                         int targetY = y+thisYOffset;
                         int targetX = x + xOffset * sign;
 
@@ -51,9 +58,9 @@ public:
                         if(targetNum == -1){
                             continue;
                         }
-                        int fromNum = pad[y][x];
+                        
 
-                        fromTo[fromNum].insert(targetNum);
+                        fromTo[fromNum].push_back(targetNum);
                     }
 
                 }
@@ -64,6 +71,10 @@ public:
             for(int i =0;i<=9;++i){
                 cache.push_back({1,(int)fromTo[i].size()});
             }
+        }
+
+        for(auto& c: cache){
+            c.reserve(n-1);
         }
 
 
