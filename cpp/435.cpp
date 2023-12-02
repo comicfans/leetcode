@@ -14,56 +14,44 @@ public:
 
         sort(intervals.begin(),intervals.end());
 
-        set<int> removed;
         int best = numeric_limits<int>::max();
-        recRemove(intervals,1,removed,best);
+        int prevEnd = numeric_limits<int>::min();
+        recRemove(intervals,1,intervals[0][1] ,0,best);
         return best;
     }
 
-    void recRemove(const vector<vector<int>>& intervals,int currentPos, set<int>& removed, int& best){
+    void recRemove(const vector<vector<int>>& intervals,int currentPos, int prevEnd, int currentRemoved, int& best){
 
-        if(removed.size() == best){
+        if(currentRemoved == best){
             return;
         }
 
         for(int i = currentPos; i < intervals.size(); ++i){
             const auto &current  = intervals[i];
 
-            int prev = i - 1;
-            while((prev>=0) && (removed.count(prev) != 0)){
-                --prev;
-            }
-
-            if(prev < 0){
+            if(current[0] >= prevEnd){
+                prevEnd = current[1];
                 continue;
             }
-
-            auto prevRange = intervals[prev];
-            if(prevRange[1]<=current[0]){
-                continue;
-            }
+            
 
             //has overlap, stop here
             //two option, remove prev, or remove current
             {
                 //remove current
 
-                auto insertPos = removed.insert(i);
-                recRemove(intervals,i + 1, removed,best);
-                removed.erase(insertPos.first);
+                recRemove(intervals,i + 1, prevEnd,currentRemoved+1,best);
             }
             {
                 //remove prev
-                auto insertPos = removed.insert(prev);
-                recRemove(intervals, i + 1, removed,best);
-                removed.erase(insertPos.first);
+                recRemove(intervals, i + 1, current[1],currentRemoved+1,best);
             }
 
             return;
         }
         //walked to confirm no overlap
 
-        best = min<int>(best,removed.size());
+        best = min(best,currentRemoved);
     }
 };
 
@@ -75,6 +63,10 @@ int main(){
     }
     {
         vector<vector<int>> input = {{1,2},{1,2},{1,2}};
+        assert(s.eraseOverlapIntervals(input) == 2);
+    }
+    {
+        vector<vector<int>> input = {{0,2},{1,3},{2,4},{3,5},{4,6}};
         assert(s.eraseOverlapIntervals(input) == 2);
     }
 }
