@@ -11,38 +11,7 @@ public:
     bool canChange(string start, string target) {
 
         
-        auto compact = [](const string& input){
-            string ret;
-            for(auto c:input){
-                if(c == '_'){
-                    continue;
-                }
-                ret.push_back(c);
-            }
-            return ret;
-        };
-
-        auto compactStart = compact(start);
-        auto compactTarget = compact(target);
-        if(compactStart != compactTarget){
-            return false;
-        }
-
-        //for every pair of L, or R, only possible
-
-        // open     to L 
-        // less     to L
-        //
-        // open to R
-        // more to R
-        // 
-        //   L  to  R
-
-        //   L more R
-        //   R to  L
-        //     less 
-
-
+       
         auto startPos = find_if(start.begin(),start.end(),[](auto c){
             return c=='L' || c=='R';
         }) - start.begin();
@@ -52,7 +21,9 @@ public:
 
         while(startPos != start.size()){
 
-            assert(start[startPos] == target[targetPos]);
+            if(start[startPos] != target[targetPos]){
+                return false;
+            }
 
             if(start[startPos] == 'L'){
                 if(targetPos > startPos){
@@ -72,10 +43,13 @@ public:
             targetPos = find_if(target.begin()+targetPos + 1,target.end(),[](auto c){
                 return c== 'L' || c == 'R';
             }) - target.begin();
-
-
-
         }
+
+        if(targetPos!= target.size()){
+            return false;
+        }
+
+
         return true;
 
     }
