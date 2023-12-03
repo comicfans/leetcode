@@ -24,11 +24,8 @@ public:
         int rowNumber = accumulate(rows,rows+m,0);
         int colNumber = accumulate(cols,cols+n,0);
 
-        int oddRows = n* rowNumber;
-        int oddCols = m * colNumber;
-        int dup = rowNumber * colNumber;
 
-        return oddRows + oddCols - dup*2;
+        return n* rowNumber + m * colNumber - rowNumber * colNumber*2;
         
     }
 };
