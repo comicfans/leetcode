@@ -11,77 +11,42 @@ public:
     int countCollisions(string directions) {
 
         int ret = 0;
+
+        int runningR = 0;
+        char lastState = 'L';
         for(int i =0;i<directions.size();++i){
 
             char thisDir = directions[i];
 
 
             if(thisDir == 'S'){
-             if(i == 0){
-                    continue;
-                }   
-
-                switch (directions[i-1]){
-                    case 'S':
-                    case 'L':{
-                        continue;
-                    }
-                    case 'R':
-                    {
-                        ret += 1;
-                        directions[i-1] = 'S';
-                    }
-                }
-
+                ret += runningR;
+                lastState = thisDir;
+                runningR = 0;
                 continue;
             }
 
 
             if(thisDir == 'L'){
-                if(i == 0){
-                    continue;
+                char nextState = 'L';
+                if(runningR > 0){
+                    ret += (runningR +1);
+                    nextState = 'S';
                 }
-                switch(directions[i-1]){
-                    case 'S':{
-                        ret+=1;
-                        directions[i] = 'S';
-                        break;
-                    }
-                    case 'R':{
-                        directions[i-1] = 'S';
-                        directions[i] = 'S';
-                        ret+=2;
-                        break;
-                    }
-                    
+                
+                if(lastState == 'S'){
+                    ret++;
+                    nextState = 'S';
                 }
+                
+                lastState = nextState;
+
+                runningR = 0;
                 continue;
             }
 
-
-            //this is R,only skip when right are end or no S/L
-            if(i == directions.size()-1){
-                break;
-            }
-
-            bool noStop = true;
-
-            for(int lookahead = i+1;lookahead < directions.size();++lookahead){
-                if(directions[lookahead]!= 'R'){
-                    noStop = false;
-                    break;
-                }
-            }
-
-            if(noStop){
-                continue;
-            }
-
-            char next = directions[i+1];
-            if(next == 'R'){
-                ret+=1;
-                directions[i] = 'S';
-            }
+            ++runningR;
+            lastState = thisDir;
         }
         
 
