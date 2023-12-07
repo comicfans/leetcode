@@ -15,7 +15,7 @@ public:
 
         int minTime = max(xDelta, yDelta);
         if(minTime == 0){
-            return t== 0;
+            return t== 0 || t > 1;
         }
 
         return t>=minTime;
