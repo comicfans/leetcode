@@ -15,12 +15,16 @@ public:
         int ret = 0;
 
 
+        bool foundOk = false;
+        bool firstTime = true;
+
         for(int begin= 0;begin <= word.size()-k;++begin){
 
-            map<char,int> times;
 
             bool jumpBegin = false;
-            for(int i = 0;i<k;++i){
+
+            map<char,int> times;
+           for(int i = 0;i<k;++i){
                 times[word[i+begin]]++;
 
                 if(i>0){
@@ -30,6 +34,9 @@ public:
                     }
                 }
             }
+            
+
+
             if(jumpBegin){
                 continue;
             }
@@ -37,7 +44,6 @@ public:
 
             for(int end = begin+k;end <= word.size();++end){
 
-                //string str = word.substr(begin,end - begin);
                 //if(str == "hifhif"){
                 //    int a = 4;
                 //}
@@ -58,6 +64,9 @@ public:
                 //test if adjust
 
                 int prev = times.begin()->first;
+
+                if(!foundOk){
+
                 bool ok = true;
                 for(auto kv: times){
                     if(kv.second > k){
@@ -69,17 +78,22 @@ public:
                         ok = false;
                         break;
                     }
+                        prev = kv.first;
+                }
+                    foundOk = ok;
+                }else{
+                    //just check this
+                    if(times[word[end-1]]!= k){
+                        foundOk=false;
+                    }
                 }
 
                 if(jumpBegin){
                     break;
                 }
                 
-                //if(ok){
-                    //cout<<word.substr(begin,end - begin)<<endl;
-                //}
 
-                ret += ok;
+                ret += foundOk;
             }
         }
 
@@ -90,11 +104,7 @@ public:
 
 int main(){
     Solution s;
-    {
-        string i ="fffififmfhhmihhifhifzhihizfmmffihzfifmfmizzfzfhmfmiimzffzzifzmziiizfzmfzfiiffffmhiizimmfm";
-        assert(s.countCompleteSubstrings(i,2) == 20);
-
-    }
+    
     {
 
         string i = "igigee";
@@ -104,5 +114,10 @@ int main(){
     {
         string i = "aaabbbccc";
         assert(s.countCompleteSubstrings(i,3) ==6);
+    }
+    {
+        string i ="fffififmfhhmihhifhifzhihizfmmffihzfifmfmizzfzfhmfmiimzffzzifzmziiizfzmfzfiiffffmhiizimmfm";
+        assert(s.countCompleteSubstrings(i,2) == 20);
+
     }
 }
