@@ -13,7 +13,6 @@ public:
 
         int minNumber = (arr.size() + 4)/ 4;
 
-        map<int,int> hits;
         for(int sample = 0;sample < arr.size(); sample+= minNumber){
 
             int thisValue = arr[sample];
