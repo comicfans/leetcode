@@ -18,17 +18,20 @@ public:
 
         int current = 0;
 
-        for(int shift = 1; shift < nums.size();++shift){
+        for(int overFrom = 0; overFrom < nums.size(); ++overFrom){
 
             int thisCount = 0;
-            for(int i =0; i< nums.size();++i){
+            int prevGreator = overFrom ;
+            for(int j = overFrom; j < nums.size();++j){
+                int thisV = nums[j];
 
-                if(nums[(i+shift) % nums.size()] > nums[i]){
-                    ++thisCount;
-                }
-                else if(nums[(i+shift) % nums.size()] < nums[i]){
+                auto pos= upper_bound(nums.begin()+prevGreator+1,nums.end(),thisV) - nums.begin();
+
+                if(pos == nums.size()){
                     break;
                 }
+                ++thisCount;
+                prevGreator = pos;
             }
 
             if(thisCount < current){
@@ -37,7 +40,21 @@ public:
                 current = thisCount;
             }
         }
+        
 
         return current;
     }
 };
+
+int main(){
+    Solution s;
+    {
+        vector<int> input = {1,2,3,4};
+        assert(s.maximizeGreatness(input) == 3);
+    }
+    {
+        vector<int> input = {1,3,5,2,1,3,1};
+        assert(s.maximizeGreatness(input) == 4);
+    }
+    
+}
