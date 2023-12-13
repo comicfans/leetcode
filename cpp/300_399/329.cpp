@@ -13,6 +13,12 @@ public:
 
     int longestIncreasingPath(vector<vector<int>>& matrix) {
 
+        auto cache = matrix;
+        for(auto& row:cache){
+            fill(row.begin(),row.end(), -1);
+        }
+
+
         int best = 0;
         for(int y =0; y<matrix.size();++y){
             for(int x = 0; x < matrix[0].size();++x){
@@ -40,7 +46,7 @@ public:
                     continue;
                 }
 
-                int thisLength = search(matrix, y,x);
+                int thisLength = search(matrix,cache, y,x);
                 best = max(best, thisLength);
             }
         }
@@ -49,7 +55,12 @@ public:
         
     }
 
-    int search(const vector<vector<int>>& matrix, int y, int x){
+    int search(const vector<vector<int>>& matrix,
+               vector<vector<int>>& cache, int y, int x){
+
+        if(cache[y][x]!=-1){
+            return cache[y][x];
+        }
 
         int prevValue = matrix[y][x];
 
@@ -69,11 +80,13 @@ public:
                 continue;
             }
 
-            int subLength = search(matrix, ty,tx);
+            int subLength = search(matrix,cache, ty,tx);
             subBest = max(subBest, subLength);
         }
 
-        return 1 + subBest;
+        cache[y][x] = 1 + subBest;
+
+        return cache[y][x];
     }
 };
 
