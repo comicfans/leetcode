@@ -1,3 +1,4 @@
+#include <numeric>
 #include <vector>
 #include <cassert>
 #include <string>
@@ -8,80 +9,61 @@
 using namespace std;
 class Solution {
 public:
-    int bestTeamScore(vector<int>& scores, vector<int>& ages) {
-
-        set<int> noConflict;
-        vector<int> search;
-
-        int score = 0;
-
-        for(int i = 0;i< scores.size();++i){
-
-            bool hasConflict = false;
-            for(int check = 0;check<scores.size();++check){
-
-                if((ages[i] == ages[check]) || (scores[i] == scores[check])){
-                    continue;
-                }
-
-                
-                if((scores[i] > scores[check]) != (ages[i] > ages[check])){
-                    hasConflict = true;
-                    break;
-                }
-            }
-
-            if(!hasConflict){
-                score += scores[i];
-            }else{
-                search.push_back(i);
-            }
+    int bestTeamScore(vector<int>& scores, vector<int>& ages) 
+    {
+        vector<pair<int,int>> score_ages(scores.size());
+        for(int i = 0;i < scores.size();++i ){
+            score_ages[i].first = scores[i];
+            score_ages[i].second = ages[i];
         }
 
+        sort(score_ages.begin(),score_ages.end());
 
+        //remove minimum score element, to make it non-decreasing
 
-        vector<int> existing;
-        int subRes = recFind(scores,ages,existing,search,0);
-        return subRes + score;
+        int totalScore = accumulate(scores.begin(),scores.end(),0);
+
+        pair<int,int> prev = {0,0};
+
+        vector<int> cache(scores.size(),-1);
+        return recFind(score_ages,0,prev,cache);
+
     }
 
-    int recFind(const vector<int>& scores,
-                const vector<int>& ages,
-                vector<int>& existing,
-                vector<int>& search,
-                int beginIdx){
+    int recFind(const vector<pair<int,int>>& score_ages, const int beginSearch, 
+                const pair<int,int> prev,vector<int>& cache){
 
-        int subBest = 0;
-        for(int idx = beginIdx;idx < search.size();++idx){
-            auto p= search[idx];
-            bool conflict =false;
+        if(beginSearch == score_ages.size()){
+            return 0;
+        }
 
-            for(auto e: existing){
+        int fromThisScore = 0;
 
-                if(ages[e] == ages[p] || scores[e] == scores[p]){
-                    continue;
-                }
-
-                if((ages[e] > ages[p]) != (scores[e]>scores[p])){
-                    conflict = true;
-                    break;
-                }
-
-            }
-
-            if(conflict){
+        for(int i = beginSearch;i < score_ages.size(); ++i){
+            auto p = score_ages[i];
+            if(p.first > prev.first && p.second < prev.second){
+                //this can't be used
                 continue;
             }
 
-            int thisSub = scores[p];
-            existing.push_back(p);
-            int subRes = recFind(scores,ages,existing,search,idx+1);
-            existing.pop_back();
+            // this can be used, may choose it or not
+            if(cache[i]==-1){
 
-            subBest = max(subBest, thisSub + subRes);
+                int chooseThisScore = p.first;
+                {
+                    int subRes = recFind(score_ages, i+1, p, cache);
+                    chooseThisScore += subRes;
+                }
+
+                int notChooseThisScore =recFind(score_ages, i+1, prev,cache);
+
+                cache[i] = max(chooseThisScore, notChooseThisScore);
+            }
+
+            fromThisScore = max(fromThisScore, cache[i]);
         }
 
-        return subBest;
+        return fromThisScore;
     }
 };
 
