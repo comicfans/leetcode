@@ -77,17 +77,23 @@ public:
     }
 
     int walk(const vector<vector<int>>& forest, int currentY, int currentX, int targetY, int targetX){
+        //speed up this
+        //
+        
 
         vector<vector<int>> steps = forest;
         for(auto& v: steps){
             fill(v.begin(),v.end(),numeric_limits<int>::max());
         }
 
-        set<pair<int,int>> toWalk = {{currentY, currentX}};
-
+        vector<pair<int,int>> toWalk = {{currentY, currentX}};
         int step = 0;
+        steps[currentY][currentX] = step;
+
         while(!toWalk.empty()){
-            set<pair<int,int>> next;
+            vector<pair<int,int>> next;
+
+
             for(auto thisFrom: toWalk){
 
                 if(thisFrom == pair<int,int>{targetY, targetX}){
@@ -95,7 +101,6 @@ public:
                 }
                 assert(forest[thisFrom.first][thisFrom.second] != 0);
 
-                steps[thisFrom.first][thisFrom.second] = step;
 
                 for(int i =0 ;i < 4;++i){
 
@@ -108,14 +113,16 @@ public:
                     }
 
                     if(steps[newY][newX] != numeric_limits<int>::max()){
-                        assert(steps[newY][newX] <= step);
+                        assert(steps[newY][newX] <= step+1);
                         continue;
                     }
 
                     if(forest[newY][newX] == 0){
                         continue;
                     }
-                    next.insert({newY,newX});
+
+                    steps[thisFrom.first][thisFrom.second] = step+1;
+                    next.push_back({newY,newX});
                 }
             }
 
@@ -128,6 +135,10 @@ public:
 
 int main(){
     Solution s;
+    {
+        vector<vector<int>> forest ={{6304,8591,1651,4114,407,3998,4382},{6614,927,235,3358,9086,4986,8284},{8505,3117,8012,0,5724,3323,6157},{8799,3083,8817,5648,3113,8562,8787},{2931,4668,4378,3901,8718,9635,41},{6223,4425,509,0,4855,0,0},{1685,6117,732,9372,9975,6939,6405},{4133,9246,4867,0,723,9105,9484},{2910,2771,8412,2757,8148,7315,5379}};
+        assert(s.cutOffTree(forest) == 338);
+    }
     {
         vector<vector<int>> forest = {{1,2,3},{0,0,0},{7,6,5}};
         assert(s.cutOffTree(forest) == -1);
