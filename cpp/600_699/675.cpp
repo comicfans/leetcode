@@ -49,18 +49,7 @@ public:
 
         int targetHeight = get<0>(heightPos[heightIdx]);
 
-        auto sameEnd = upper_bound(heightPos.begin()+heightIdx, heightPos.end(), heightPos[heightIdx],[](auto& lhs, auto& rhs){
-            return get<0>(lhs) < get<0>(rhs);
-        }) - heightPos.begin();
-
-
-        //we can try from current to any of these target
-
-        int subBest = numeric_limits<int>::max();
-
-        for(auto idx = heightIdx; idx != sameEnd; ++idx){
-
-            auto& thisTarget = heightPos[idx];
+            auto& thisTarget = heightPos[heightIdx];
             int targetY= thisTarget.second.first;
             int targetX =thisTarget.second.second;
 
@@ -70,7 +59,7 @@ public:
 
             if(singleWalk == numeric_limits<int>::max()){
                 //this can't walk
-                continue;
+                return singleWalk;
             }
 
             forest[targetY][targetX] = 1;
@@ -78,15 +67,13 @@ public:
             forest[targetY][targetX] = get<0>(thisTarget);
 
             if(leftWalk == numeric_limits<int>::max()){
-                continue;
+                return leftWalk;
             }
 
             int thisPath = singleWalk + leftWalk;
 
-            subBest = min(subBest, thisPath);
-        }
 
-        return subBest;
+        return thisPath;
     }
 
     int walk(const vector<vector<int>>& forest, int currentY, int currentX, int targetY, int targetX){
@@ -141,6 +128,10 @@ public:
 
 int main(){
     Solution s;
+    {
+        vector<vector<int>> forest = {{1,2,3},{0,0,0},{7,6,5}};
+        assert(s.cutOffTree(forest) == -1);
+    }
     {
        vector<vector<int>> forest={{9, 12, 5, 14}, {17, 11, 13, 15}, {2, 20, 19, 21}, {16, 4, 7, 8}, {18, 3, 6, 10}};
 
