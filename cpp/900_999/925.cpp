@@ -10,42 +10,43 @@ class Solution {
 public:
     bool isLongPressedName(string name, string typed) {
 
-        int lastCharPos = -1;
-        for(int i = 0;i< name.size();++i){
-            auto c=name[i];
-            int thisPos = typed.find(c,lastCharPos+1);
-            if(thisPos == string::npos){
+        int i = 0;
+        int j = 0;
+
+        while(i< name.size() || j<typed.size()){
+
+            if(i>=name.size()){
+                if(typed[j]!= name.back()){
+                    return false;
+                }
+
+                ++j;
+                continue;
+            }
+
+            if(j >= typed.size()){
                 return false;
             }
 
-            //during lastCharPos+1 ~ thisPos must be repeat of prev char
-            //
-            if(i == 0){
-                if(thisPos!=0){
-                    return false;
-                }
-                lastCharPos = thisPos;
+
+            if(name[i]==typed[j]){
+                ++i;
+                ++j;
                 continue;
             }
-            
-            for(int j = lastCharPos +1;j<thisPos;++j){
-                if(typed[j]!= name[i - 1]){
-                    return false;
-                }
+
+            if(i == 0){
+                return false;
             }
 
-
-            lastCharPos = thisPos;
+            if(name[i-1] == typed[j]){
+                ++j;
+                continue;
+            }else{
+                return false;
+            }
         }
-
-        if(lastCharPos == typed.size()-1){
-            return true;
-        }
-
-        auto nonRepeat = typed.find_first_not_of(name.back(),lastCharPos+1);
-
-        return nonRepeat == string::npos;
-        
+        return true;
     }
 };
 
