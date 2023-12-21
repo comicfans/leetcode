@@ -14,7 +14,9 @@ public:
             return 0;
         }
 
-        sort(points.begin(),points.end());
+        sort(points.begin(),points.end(),[](auto& lhs, auto& rhs){
+            return lhs[0] < rhs[0];
+        });
 
         int prevX = points.front()[0];
 
