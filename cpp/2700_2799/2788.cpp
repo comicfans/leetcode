@@ -14,25 +14,21 @@ public:
 
         for(const auto s:words){
 
-
-            int prevPos = -1;
-
-            while(prevPos != s.size()){
-                int thisPos = s.find(separator,prevPos + 1);
-                if(thisPos == string::npos){
-                    thisPos = s.size();
+            bool newOne = true;
+            for(auto c: s){
+                if(c == separator){
+                    newOne = true;
+                    continue;
                 }
 
-            int thisSize = thisPos - prevPos-1;
-            if(thisSize > 0){
-                ret.push_back(s.substr(prevPos+1,thisSize));
+
+                if(newOne){
+                    ret.push_back(string({c}));
+                }else{
+                    ret.back().push_back(c);
+                }
+                newOne = false;
             }
-
-            prevPos = thisPos;
-            
-
-}
-
         }
         return ret;
         
