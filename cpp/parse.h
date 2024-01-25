@@ -47,6 +47,11 @@ vector<int> pvi(const std::string& v){
         }
 
         if((v[i] == ']') || (v[i] == ',')){
+
+            if(prevStart == -1){
+                break;
+            }
+
             stringstream ss;
             ss<< v.substr(prevStart, i-prevStart);
             int value;
@@ -72,20 +77,16 @@ vector<string> pvs(const std::string& v){
 
     int prevStart = -1;
     for(int i=0;i<v.size();++i){
-
-        if((v[i] == '[') || (v[i] == ' ') || (v[i] == '"')){
-            continue;
-        }
-
         if(((v[i] == '"') && (prevStart != -1))){
-            stringstream ss;
-            ss<< v.substr(prevStart, i-prevStart);
-            string value;
-            ss>>value;
-            ret.push_back(value);
+            ret.push_back(v.substr(prevStart, i-prevStart));
             prevStart = -1;
             continue;
         }
+        if((v[i] == '[') || (v[i] == ' ') || (v[i] == '"' && prevStart == -1)||(v[i] == ',')){
+            continue;
+        }
+
+        
 
         if(prevStart == -1){
             prevStart = i;

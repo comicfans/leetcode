@@ -1,4 +1,3 @@
-#include <limits>
 #include <vector>
 #include <cassert>
 #include <string>
@@ -20,31 +19,23 @@ struct TreeNode {
 class Solution {
 public:
     int minDepth(TreeNode* root) {
-
         if(!root){
             return 0;
         }
-
-        return recFind(root,1);
-    }
-
-    int recFind(TreeNode* root, int level){
-
-        if(!root->left && !root->right){
-            return level;
+        int leftDepth = numeric_limits<int>::max();
+        if(root->left){
+            leftDepth = minDepth(root->left);
         }
-
-        int left = numeric_limits<int>::max();
-        if (root->left){
-            left = recFind(root->left, level+1);
-        }
-
-        int right  = numeric_limits<int>::max();
-
+        int rightDepth = numeric_limits<int>::max();
         if(root->right){
-            right = recFind(root->right, level+1);
+            rightDepth = minDepth(root->right);
+            
         }
-
-        return min(left,right);
+        if(leftDepth == rightDepth && leftDepth == numeric_limits<int>::max()){
+            return 1;
+        }else{
+            return 1+min(leftDepth,rightDepth);
+        }
+        
     }
 };
