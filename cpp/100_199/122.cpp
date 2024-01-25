@@ -10,45 +10,51 @@ class Solution {
 public:
     int maxProfit(vector<int>& prices) {
 
-        vector<int> cache(prices.size(),0);
+        vector<int> filter;
 
-        return recFind(prices,cache,0,-1);
-    }
+        bool searchLow = true;
+        for(int i = 0; i < prices.size();++i){
 
-    int recFind(const vector<int>& prices, vector<int>& cache, int pos, int enter){
+            if(searchLow){
 
-        if(pos == prices.size()-1){
-            return enter>=0?prices[pos]-enter:0;
-        }
 
-        
-        if(enter == -1){
-            //not holding 
+                if(i>0 && prices[i]>prices[i-1]){
+                        continue;
+                }
 
-            if(cache[pos]!=0){
-                return cache[pos];
+                if(i <prices.size()-1 && prices[i]>= prices[i+1]){
+                    continue;
+                }
+
+                filter.push_back(prices[i]);
+                searchLow = false;
+
+                continue;
             }
-            //try enter
-
-            int enterProfit= recFind(prices, cache,pos+1, prices[pos]);
-
-            int noEnterProfit=(pos == prices.size()-1? 0:recFind(prices,cache,pos+1,-1));
-
-            cache[pos] = max(enterProfit, noEnterProfit);
-            return cache[pos];
+            
+            if(i>0 && prices[i]<prices[i-1]){
+                continue;
+            }
+            if(i < prices.size() - 1 && prices[i] <= prices[i+1]){
+                continue;
+            }
+            filter.push_back(prices[i]);
+            searchLow = true;
         }
+
+        if(!searchLow){
+            filter.pop_back();
+        }
+
+        int ret = 0;
+
+        for(int i = 1;i<filter.size();i+=2){
+            ret += (filter[i] - filter[i-1]);
+        }
+
+       
+        return ret;
         
-        //sell at this pos, or not
-
-        if(prices[pos]<= enter){
-            return recFind(prices,cache,pos+1,enter);
-        }
-
-        int sellRes = prices[pos] - enter + recFind(prices,cache, pos+1, -1);
-        int notSellRes = recFind(prices,cache,pos+1,enter);
-
-        return max(sellRes,notSellRes);
-
     }
 };
 
