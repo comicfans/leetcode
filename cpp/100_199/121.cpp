@@ -8,84 +8,35 @@
 using namespace std;
 class Solution {
 public:
-    int maxProfit(vector<int>& prices) {
-
-        vector<int> filter;
-
-        bool searchLow = true;
-        for(int i = 0; i < prices.size();++i){
-
-            if(searchLow){
-
-
-                if(i>0 && prices[i]>prices[i-1]){
-                        continue;
-                }
-
-                if(i <prices.size()-1 && prices[i]>= prices[i+1]){
-                    continue;
-                }
-
-                filter.push_back(prices[i]);
-                searchLow = false;
-
-                continue;
-            }
-            
-            if(i>0 && prices[i]<prices[i-1]){
-                continue;
-            }
-            if(i < prices.size() - 1 && prices[i] <= prices[i+1]){
-                continue;
-            }
-            filter.push_back(prices[i]);
-            searchLow = true;
-        }
-
-        if(!searchLow){
-            filter.pop_back();
-        }
-
-
-        assert(filter.size()%2==0);
-        if(filter.empty()){
+    int maxProfit(vector<int>& prices) 
+    {
+        if(prices.empty()){
             return 0;
         }
 
-        int halfSize = filter.size()/2;
-        vector<pair<int,int>> leftMinRightMax(halfSize);
-
-
-        for(int i = 0;i<halfSize;++i){
-
-            int rIdx = halfSize-1 - i;
-            leftMinRightMax[i].first = filter[i*2];
-            leftMinRightMax[rIdx].second = filter[rIdx*2+1];
-
-            if(i==0){
-                continue;
-            }
-
-            leftMinRightMax[i].first = min(leftMinRightMax[i].first, leftMinRightMax[i-1].first);
-            leftMinRightMax[rIdx].second = max(leftMinRightMax[rIdx].second, leftMinRightMax[rIdx+1].second);
-        }
-
-
+        int currentMin = prices[0];
         int ret = 0;
 
-        for(int i = 0;i<halfSize;++i){
+        for(int i = 1;i<prices.size();++i){
+           
 
-            int thisProfit = leftMinRightMax[i].second - leftMinRightMax[i].first;
-            ret = max(ret,thisProfit);
+            ret = max(ret, prices[i]-prices[i-1]);
+         
+            ret = max(ret,prices[i]-currentMin);
+
+            currentMin = min(currentMin, prices[i]);
         }
-
         return ret;
-        
     }
 };
 
 int main(){
     Solution s;
+    {
+        vector<int> prices = {1,2,4};
+        auto res = s.maxProfit(prices);
+        assert(res == 3);
+    }
     {
         vector<int> prices = {2,1,2,0,1};
         auto res = s.maxProfit(prices);
@@ -104,4 +55,6 @@ int main(){
         assert(res == 3);
     }
     
+    
 }
+
