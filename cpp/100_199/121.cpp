@@ -10,25 +10,72 @@ class Solution {
 public:
     int maxProfit(vector<int>& prices) {
 
-        vector<pair<int,int>> leftMinRightMax(prices.size());
+        vector<int> filter;
 
-        for(int i = prices.size()-1;i>=0;--i){
+        bool searchLow = true;
+        for(int i = 0; i < prices.size();++i){
 
-            leftMinRightMax[prices.size()-1-i].first= prices[prices.size()-1-i]; 
+            if(searchLow){
 
-            leftMinRightMax[i].second = prices[i]; 
 
-            if(i != prices.size()-1){
-                 leftMinRightMax[i].second= max(leftMinRightMax[i+1].second,leftMinRightMax[i].second);
-                leftMinRightMax[prices.size()-1-i].first = min(leftMinRightMax[prices.size()-i-2].first,leftMinRightMax[prices.size()-i-1].first);
+                if(i>0 && prices[i]>prices[i-1]){
+                        continue;
+                }
+
+                if(i <prices.size()-1 && prices[i]>= prices[i+1]){
+                    continue;
+                }
+
+                filter.push_back(prices[i]);
+                searchLow = false;
+
+                continue;
             }
+            
+            if(i>0 && prices[i]<prices[i-1]){
+                continue;
+            }
+            if(i < prices.size() - 1 && prices[i] <= prices[i+1]){
+                continue;
+            }
+            filter.push_back(prices[i]);
+            searchLow = true;
         }
+
+        if(!searchLow){
+            filter.pop_back();
+        }
+
+
+        assert(filter.size()%2==0);
+        if(filter.empty()){
+            return 0;
+        }
+
+        int halfSize = filter.size()/2;
+        vector<pair<int,int>> leftMinRightMax(halfSize);
+
+
+        for(int i = 0;i<halfSize;++i){
+
+            int rIdx = halfSize-1 - i;
+            leftMinRightMax[i].first = filter[i*2];
+            leftMinRightMax[rIdx].second = filter[rIdx*2+1];
+
+            if(i==0){
+                continue;
+            }
+
+            leftMinRightMax[i].first = min(leftMinRightMax[i].first, leftMinRightMax[i-1].first);
+            leftMinRightMax[rIdx].second = max(leftMinRightMax[rIdx].second, leftMinRightMax[rIdx+1].second);
+        }
+
 
         int ret = 0;
 
-        for(int i = 0;i<leftMinRightMax.size()-1;++i){
+        for(int i = 0;i<halfSize;++i){
 
-            int thisProfit = leftMinRightMax[i+1].second - leftMinRightMax[i].first;
+            int thisProfit = leftMinRightMax[i].second - leftMinRightMax[i].first;
             ret = max(ret,thisProfit);
         }
 
@@ -40,9 +87,21 @@ public:
 int main(){
     Solution s;
     {
+        vector<int> prices = {2,1,2,0,1};
+        auto res = s.maxProfit(prices);
+        assert(res == 1);
+    }
+    {
         vector<int> prices = {7,1,5,3,6,4};
 
         auto res = s.maxProfit(prices);
         assert(res == 5);
     }
+    {
+        vector<int> prices = {2,2,5};
+
+        auto res = s.maxProfit(prices);
+        assert(res == 3);
+    }
+    
 }
