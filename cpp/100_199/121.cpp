@@ -10,9 +10,7 @@ class Solution {
 public:
     int maxProfit(vector<int>& prices) 
     {
-        if(prices.empty()){
-            return 0;
-        }
+       
 
         int currentMin = prices[0];
         int ret = 0;
