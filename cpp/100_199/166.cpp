@@ -67,3 +67,38 @@ public:
     }
 };
 
+int main(){
+    Solution s;
+    {
+        int num=
+-1,
+        den=
+-2147483648;
+        assert(s.fractionToDecimal(num,den) == "0.0000000004656612873077392578125");
+    }
+    {
+        int num = -22,den = -2;
+        assert(s.fractionToDecimal(num,den) == "11");
+    }
+    {
+        int num = -50,den = 8;
+        assert(s.fractionToDecimal(num,den) == "-6.25");
+    }
+    {
+        int num = 4,den = 333;
+        assert(s.fractionToDecimal(num,den) == "0.(012)");
+    }
+    {
+        int num = 1,den = 2;
+        assert(s.fractionToDecimal(num,den) == "0.5");
+    }
+    {
+        int num = 2,den = 1;
+        assert(s.fractionToDecimal(num,den) == "2");
+    }
+    {
+        int num = 0, den = -5;
+        assert(s.fractionToDecimal(num,den)=="0");
+    }
+    
+}
