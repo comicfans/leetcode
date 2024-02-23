@@ -9,36 +9,11 @@ using namespace std;
 class Solution {
 public:
     void moveZeroes(vector<int>& nums) {
+        auto res = copy_if(nums.begin(),nums.end(),nums.begin(),[](int v){
+            return v!=0;
+        });
 
-        int zeroEnd = -1;
-        for(int check = 0; check < nums.size(); ++check){
-
-            if(nums[check] != 0){
-                continue;
-            }
-
-
-
-            if(zeroEnd == -1){
-                zeroEnd = find_if(nums.begin()+check+1,nums.end(),[](int v){
-                    return v!=0;
-                }) - nums.begin();
-            }else{
-                zeroEnd = find_if(nums.begin()+zeroEnd, nums.end(),[](int v){
-                    return v!=0;
-                }) - nums.begin();
-            }
-
-            if(zeroEnd == nums.size()){
-                break;
-            }
-
-            swap(nums[check],nums[zeroEnd]);
-            zeroEnd++;
-
-
-        }
-
+        fill(res,nums.end(),0);
 
     }
 };
