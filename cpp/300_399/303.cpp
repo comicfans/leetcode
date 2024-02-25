@@ -9,15 +9,20 @@
 using namespace std;
 class NumArray {
 public:
-    NumArray(vector<int>& nums):copy(nums) {
+    NumArray(vector<int>& nums):cumsum(nums.size()) {
+
+        
+        for(int i =0;i<nums.size();++i){
+            cumsum[i] = nums[i] + (i==0?0:cumsum[i-1]);
+            
+        }
         
     }
     
     int sumRange(int left, int right) {
-
-        return accumulate(copy.begin()+left, copy.begin()+right+1,0);
+        return cumsum[right] - (left>0?cumsum[left-1]:0);
     }
 
 private: 
-    vector<int> copy;
+    vector<int> cumsum;
 };
