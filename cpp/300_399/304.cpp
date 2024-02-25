@@ -11,6 +11,13 @@ class NumMatrix {
 public:
     NumMatrix(vector<vector<int>>& matrix){
         swap(copy,matrix);
+
+        for(int y = 0; y < copy.size(); ++y){
+            auto& row = copy[y];
+            for(int x = 1; x < row.size();++x){
+                row[x] = row[x-1] + row[x];
+            }
+        }
         
     }
     
@@ -18,7 +25,8 @@ public:
         
         int res = 0;
         for(int row = row1;row<=row2;++row){
-            res += accumulate(copy[row].begin()+col1,copy[row].begin()+col2+1,0);
+            int rowSum = copy[row][col2] - (col1==0?0:copy[row][col1-1]);
+            res += rowSum;
 
         }
         return res;
