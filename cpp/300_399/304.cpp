@@ -10,12 +10,12 @@ using namespace std;
 class NumMatrix {
 public:
     NumMatrix(vector<vector<int>>& matrix){
-        swap(copy,matrix);
+        swap(_copy,matrix);
 
-        for(int y = 0; y < copy.size(); ++y){
-            auto& row = copy[y];
-            for(int x = 1; x < row.size();++x){
-                row[x] = row[x-1] + row[x];
+        for(int y = 0; y < _copy.size(); ++y){
+            auto& row = _copy[y];
+            for(int x = 0; x < row.size();++x){
+                row[x] = (x>0?row[x-1]:0) + (y >0? _copy[y-1][x]:0) + row[x] - (y>0&& x>0? _copy[y-1][x-1]:0);
             }
         }
         
@@ -23,17 +23,18 @@ public:
     
     int sumRegion(int row1, int col1, int row2, int col2) {
         
-        int res = 0;
-        for(int row = row1;row<=row2;++row){
-            int rowSum = copy[row][col2] - (col1==0?0:copy[row][col1-1]);
-            res += rowSum;
+        int bottomRight = _copy[row2][col2];
+        int left = (col1>0 ?_copy[row2][col1-1]:0);
+        int top = (row1>0 ? _copy[row1-1][col2]:0);
 
-        }
-        return res;
+        int topLeft = (col1>0 && row1 >0? _copy[row1-1][col1-1]:0);
+
+        return bottomRight - left - top + topLeft;
+        
     }
 
 private:
-    vector<vector<int>> copy;
+    vector<vector<int>> _copy;
 };
 
 /**
