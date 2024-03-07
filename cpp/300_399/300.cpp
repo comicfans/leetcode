@@ -16,6 +16,11 @@ public:
         for(int i = 0;i<nums.size();++i){
             int v = nums[i];
 
+            if(i > 0 && v== nums[i-1]){
+                continue;
+            }
+
+
             int currentLength = 0;
             auto pos = numLength.begin();
             for(;pos != numLength.end();++pos){
@@ -25,6 +30,9 @@ public:
                 }
 
                 currentLength = max(currentLength, pos->second);
+                if(currentLength == i ){
+                    break;
+                }
             }
 
             ret = max(currentLength+1, ret);
