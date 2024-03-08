@@ -10,24 +10,23 @@ class Solution {
 public:
     int getMoneyAmount(int n) {
 
-        map<pair<int,int>,int> cache;
+        vector<vector<int>> cache(n, vector<int>(n,INT_MAX));
         int res = recMin(1, n, cache);
         return res;
     }
 
-    int recMin(int left, int right, map<pair<int,int>,int>& cache){
+    int recMin(int left, int right, vector<vector<int>>& cache){
         assert(left <= right);
 
         if(left == right){
             return 0;
         }
 
-        auto pos = cache.find({left,right});
-        if(pos != cache.end()){
-            return pos->second;
+        int hit= cache[left-1][right - 1] ;
+        if(hit!= INT_MAX){
+            return hit;
         }
-
-
+        
         int thisBest = INT_MAX;
         for(int asRoot = right; asRoot >= left; --asRoot){
 
@@ -41,7 +40,7 @@ public:
 
         }
 
-        cache[{left,right}] = thisBest;
+        cache[left-1][right-1] = thisBest;
 
         return thisBest;
     }
