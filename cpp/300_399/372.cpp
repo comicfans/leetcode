@@ -12,51 +12,45 @@ public:
 
             a%=1337;
 
-            if(a==0){
-                return 0;
-            }
-            if(a==1){
-            return 1;
-        }
-
-            int mod = 1;
+            int base = a;
+            int ret = 1;
             for(int i = 0; i < b.size(); ++i){
+                if(base == 0){
+                    return 0;
+                }
+                
 
                 int thisMode = 1;
                 int pw = b[b.size()-1-i];
-                for(int j = 0; j<pw; ++j ){
-                    thisMode *= a;
+                if(base != 1){
+                    for(int j = 0; j<pw; ++j ){
+                        thisMode *= base;
+                        thisMode %= 1337;
+                        if(thisMode == 0){
+                            return 0;
+                        }
+                    }
+                }
+                
+
+                ret = (ret * thisMode) % 1337;
+
+                for(int j = 0; j < 10 - pw && i!= b.size()-1; ++j){
+                    thisMode *= base;
                     thisMode %= 1337;
-                    if(thisMode == 0){
-                        break;
-                    }
                 }
 
-                if(thisMode == 0){
-                    return 0;
-                }
-
-                if(thisMode == 1){
-                    continue;
-                }
-
-                for(int j =0; j < i; ++j){
-                    int mul = thisMode;
-                    for(int k = 1; k<10;++k){
-                        thisMode = (thisMode * mul) % 1337;
-                    }
-                }
-
-                mod = (mod * thisMode) % 1337;
+                base = thisMode;
             }
 
-            return mod;
+            return ret;
             
         }
 };
 
 int main(){
     Solution s;
+    
     {
         int a  = 3; vector<int> b = {1,0};
         int res = s.superPow(a,b);
