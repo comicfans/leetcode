@@ -20,16 +20,21 @@ public:
             int counts[26] = {0};
 
             int lessThanNumber = 0;
+            int hitCount = 0;
 
             for(int end = start; end < s.size(); ++end){
                 int cIdx = s[end] - 'a';
 
-                bool newChar = false;
-
-                assert(counts[cIdx]>=0);
 
                 if(counts[cIdx] == 0){
                     ++lessThanNumber;
+                    ++hitCount;
+                }
+
+                int least = hitCount * k;
+                int leastEnd = start+least;
+                if(leastEnd > s.size()){
+                    break;
                 }
 
                 counts[cIdx]++;
