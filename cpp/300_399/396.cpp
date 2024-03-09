@@ -31,8 +31,7 @@ public:
         for(int thisEndIdx = nums.size()-2; thisEndIdx >= 0; --thisEndIdx){
 
             const int prevEnd = nums[thisEndIdx+1];
-            const int sumHead = allSum - prevEnd;
-            int nextSum = prevSum + sumHead - (nums.size()-1)* prevEnd;
+            int nextSum = prevSum + allSum - nums.size()* prevEnd;
 
             bestSum = max(bestSum, nextSum);
             prevSum = nextSum;
