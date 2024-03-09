@@ -21,10 +21,11 @@ public:
         //2+6+4 - 3x3 
         //F(3) = (0 * 3) + (1 * 2) + (2 * 6) + (3 * 4) = 0 + 2 + 12 + 12 = 26
         
-        const int allSum = accumulate(nums.begin(),nums.end(),0);
+        int allSum = 0;
         int bestSum = 0;
         for(int i = 0;i<nums.size(); ++i){
             bestSum += i*nums[i];
+            allSum += nums[i];
         }
 
         int prevSum = bestSum;
