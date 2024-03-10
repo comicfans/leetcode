@@ -10,10 +10,11 @@ class Solution {
 public:
     long long maximumStrength(vector<int>& nums, int k) {
 
-        return rec(nums,0,k,1);
+        map<pair<int,int>,long long> cache;
+        return rec(nums,0,k,1, cache);
     }
 
-    long long rec(const vector<int>& nums, int pos, int k, int sign){
+    long long rec(const vector<int>& nums, int pos, int k, int sign, map<pair<int,int>,long long> &cache){
 
         if(pos == nums.size()){
             assert(k == 0);
@@ -22,6 +23,12 @@ public:
         if(k == 0){
             return 0;
         }
+
+        auto hit = cache.find({pos, k});
+        if(hit != cache.end()){
+            return hit->second;
+        }
+
 
         // pick start
         assert(pos +k <= nums.size());
@@ -34,7 +41,7 @@ public:
 
                 long long thisV = currentSum * k * sign;
 
-                long long subV = rec(nums, end, k-1, -sign);
+                long long subV = rec(nums, end, k-1, -sign, cache);
 
                 long long totalV = thisV + subV;
 
@@ -48,6 +55,9 @@ public:
         }
 
         assert(best != numeric_limits<long long>::min());
+
+        cache[{pos,k}] = best;
+
         return best;
 
 
