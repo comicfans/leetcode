@@ -10,31 +10,34 @@ class Solution {
 public:
     int longestPalindrome(string s) {
 
-        map<char,int> charNumber;
-        for(auto c: s){
-            charNumber[c]++;
-        }
+        sort(s.begin(),s.end());
 
-        int res = 0;
+        int ret = 0;
+        int pos = 0;
+        while(pos != s.size()){
 
-        for(const auto kv: charNumber){
+            int charEnd = upper_bound(s.begin()+pos, s.end(), s[pos]) - s.begin();
 
-            int even = kv.second / 2 * 2;
+            int thisCharCount = charEnd - pos;
 
-            res += even;
-
-            if(kv.second == even){
+            if(thisCharCount %2 == 0){
+                ret += thisCharCount ;
+                pos = charEnd;
                 continue;
             }
 
-            if(res %2 == 0){
-                res+=1;
+            if(ret %2 == 0){
+                ret+=thisCharCount;
+            }else{
+                ret += (thisCharCount /2 * 2);
             }
+            pos = charEnd;
 
 
         }
 
-        return res;
+
+        return ret;
 
         
     }
