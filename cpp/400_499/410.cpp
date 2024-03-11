@@ -14,11 +14,13 @@ using namespace std;
 class Solution {
 public:
     int splitArray(vector<int>& nums, int k) {
+
+        int allSum = accumulate(nums.begin(),nums.end(), 0);
         map<int,map<int,int>> cache;
-        return rec(nums, 0, k, cache);
+        return rec(nums, 0, k, cache, allSum);
     }
 
-    int rec(const vector<int>& nums, int beginEle, int k,map<int,map<int,int>>& cache){
+    int rec(const vector<int>& nums, int beginEle, int k,map<int,map<int,int>>& cache, const int leftSum){
 
         assert(k!=0);
 
@@ -32,17 +34,45 @@ public:
         }
 
         int subBest =numeric_limits<int>::max();
+        int expectSum = leftSum / k;
 
         int sum = 0;
 
-        for(int end = beginEle +1; end <= nums.size() - (k-1) ; ++end){
+        int chooseEnd = beginEle +1;
+        for(int end = chooseEnd ;end <= nums.size() - (k-1) ; ++end){
             sum += nums[end - 1];
+            if(sum == expectSum){
+                chooseEnd = end;
+                break;
+            }
 
-            int sub = rec(nums,end, k-1, cache);
+            if(sum > expectSum){
+                chooseEnd = max(beginEle +1 , end - 1);
+                if(chooseEnd < end){
+                    sum -= nums[end-1];
+                }
+                break;
+            }
+
+            chooseEnd = end;
+        }
+
+
+        for(int end = chooseEnd; end <= nums.size() - (k-1) ; ++end){
+
+            int sub = rec(nums,end, k-1, cache, leftSum - sum);
 
             int thisRes = max(sub, sum);
 
+            if(thisRes > subBest){
+                break;
+            }
+
             subBest = min(thisRes, subBest);
+            sum += nums[end];
+            if(sum > subBest){
+                break;
+            }
         }
 
         cache[beginEle].insert({k, subBest});
@@ -52,6 +82,11 @@ public:
 
 int main(){
     Solution s;
+    {
+        VI nums = {1,4,4};
+        auto res = s.splitArray(nums, 3);
+        assert(res == 4);
+    }
     {
         VI nums = {7,2,5,10,8};
         auto res = s.splitArray(nums, 2);
