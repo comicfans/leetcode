@@ -1,5 +1,7 @@
 #include<vector>
+#include<algorithm>
 #include<sstream>
+#include<memory>
 #include<cassert>
 #include<fstream>
 #include<string>
@@ -234,6 +236,7 @@ vector<vector<string>> pvvs(const std::string file,int lineno){
         ++i;
     }
 
+    assert(f.good());
     return pvvs(line);
 
 }
@@ -251,6 +254,7 @@ vector<vector<int>> pvvi(const std::string file,int lineno){
         ++i;
     }
 
+    assert(f.good());
     return pvvi(line);
 
 }
@@ -276,4 +280,80 @@ int pi(const std::string file, int lineno){
 
     return pi(line);
 
+}
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+    ~TreeNode(){
+        if(left){
+            delete left;
+        }
+        if(right){
+            delete right;
+        }
+    }
+};
+
+vector<string> pin(const string& tree){
+    assert(tree.front()=='[');
+    assert(tree.back()==']');
+
+    int pos = 1;
+
+    vector<string> ret;
+    while(pos < tree.size()-1){
+        int nextPos = find(tree.begin()+pos, tree.end()-1,',') - tree.begin();
+        ret.push_back(tree.substr(pos, nextPos - pos));
+        pos = nextPos+1;
+    }
+
+    return ret;
+}
+
+void recConstructTree(TreeNode* root, const vector<string>& strs, int rootNode, vector<TreeNode*>& vec){
+
+
+    // 0
+    // 1,   2
+    // 3,   4     5,6
+    // 7,8  9,10  11,12, 13,14
+    int lNode = rootNode * 2 + 1;
+
+    if(lNode< strs.size() && strs[lNode]!= "null"){
+        root->left = new TreeNode(atoi(strs[lNode].c_str()));
+        vec[lNode] = root->left;
+        recConstructTree(root->left, strs, lNode,vec);
+    }
+    
+    int rNode = lNode +1;
+    if(rNode < strs.size() && strs[rNode]!= "null"){
+        root->right = new TreeNode(atoi(strs[rNode].c_str()));
+        vec[rNode] = root->right;
+        recConstructTree(root->right, strs,rNode,vec);
+    }
+}
+
+std::pair<std::unique_ptr<TreeNode>, vector<TreeNode*>> pt(const string& tree){
+
+    auto strs = pin(tree);
+    vector<TreeNode*> vec(strs.size());
+
+    if(strs.empty() || strs.front() == "null"){
+        return {nullptr,vec};
+    }
+
+    unique_ptr<TreeNode> root(new TreeNode(atoi(strs.front().c_str())));
+
+    recConstructTree(root.get(), strs, 0,vec);
+
+    return std::move(std::pair<std::unique_ptr<TreeNode>, vector<TreeNode*>>{root.release(),vec});
 }
