@@ -14,28 +14,24 @@ public:
         for(int y = 0; y< board.size(); ++y){
             for(int x = 0; x< board[y].size(); ++x){
 
-                if(board[y][x] == 'X'){
-                    rec(board,y,x);
-                    ++ret;
+                if(board[y][x] == '.'){
+                    continue;
                 }
+
+                if(y >0 && board[y-1][x] == 'X'){
+                    continue;
+                }
+
+                if(x >0 && board[y][x-1] == 'X'){
+                    continue;
+                }
+
+                ++ret;
 
             }
         }
         return ret;
     }
 
-    void rec(vector<vector<char>>& board, int y,int x){
-
-
-        for(int newY = y+1; newY < board.size() && board[newY][x] == 'X'; ++newY){
-            board[newY][x] = '.';
-        }
-
-        for(int newX = x+1; newX < board[y].size() && board[y][newX] == 'X'; ++newX){
-            board[y][newX] = '.';
-        }
-
-        board[y][x] = '.';
-
-    }
+    
 };
