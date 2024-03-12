@@ -14,114 +14,68 @@ class Solution {
 public:
     vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
 
-        vector<vector<int>> cache(heights.size(), vector<int>(heights.front().size(),0));
+        vector<vector<pair<bool,bool>>> cache(heights.size(), vector<pair<bool,bool>>(heights.front().size()));
 
-        set<pair<int,int>> path;
-        for(int y = 0;y< heights.size(); ++y){
-            for(int x = 0;x < heights[y].size();++x){
-                rec(heights, y,x,cache,path);
-            }
+        for(int y = 0; y< heights.size();++y){
+            cache[y].front().first = true;
+            cache[y].back().second = true;
         }
 
+        for(int x = 0; x< heights[0].size(); ++x){
+            cache.front()[x].first = true;
+            cache.back()[x].second  = true;
+        }
 
         //0 not tried,  1, to pac, 2 to atl , 3 too both, 4 none
-vector<vector<int>> ret;
         for(int y = 0; y < cache.size();++y){
             for(int x = 0; x< cache[y].size(); ++x){
-                if(cache[y][x] == 3){
+                rec(heights, cache, y,x);
+            }
+        }
+        vector<vector<int>> ret;
+        for(int y = 0; y < cache.size();++y){
+            for(int x = 0; x< cache[y].size(); ++x){
+                if(cache[y][x] == pair<bool,bool>{true, true}){
                     ret.push_back({y,x});
                 }
             }
         }
-
         return ret;
         
     }
 
-    int rec(const vector<vector<int>>& heights, int y, int x, vector<vector<int>>& cache, set<pair<int,int>>& path){
+    void rec(const vector<vector<int>>& heights, vector<vector<pair<bool,bool>>>& cache, int y,int x){
 
-        if(cache[y][x]!= 0){
-            return cache[y][x];
+        if(cache[y][x] == pair<bool,bool>{false,false}){
+            return;
         }
 
         int offset[][2]= {{0,1},{0,-1},{1,0},{-1,0}};
-
-        assert(path.count({y,x}) == 0);
-        auto pos =path.insert({y,x});
-
-        bool reachPac = false;
-        bool reachAtl= false;
-        bool hasUnknown = false;
-        for(int dir = 0; dir < 4 && (!( reachPac&& reachAtl));++dir){
+        for(int dir = 0; dir < 4 ;++dir){
             int newY = y + offset[dir][0];
             int newX = x + offset[dir][1];
 
-            if(newY < 0 || newX < 0 ){
-                reachPac = true;
-                continue;
-            }
-
-            if(newY >= heights.size() || newX >= heights[0].size()){
-                reachAtl = true;
-                continue;
-            }
             
-            if(heights[newY][newX] > heights[y][x]){
+
+            if(newY < 0 || newX < 0 || newY >= heights.size() || newX >= heights[0].size()){
                 continue;
             }
 
-            if(path.count({newY,newX})){
-                hasUnknown = true;
+            if(heights[newY][newX] < heights[y][x]){
                 continue;
             }
 
-            int subRes = rec(heights, newY, newX, cache,path);
+            bool targetFirst = cache[newY][newX].first ;
+            bool targetSecond = cache[newY][newX].second;
 
-            switch(subRes){
-                case 0:{
-                    assert(false);
-                }
-                case 1:{
-                    reachPac = true;
-                    continue;
-                }
-                case 2:{
-                    reachAtl = true;
-                    continue;
-                }
-                case 3:{
-                    reachPac = true;
-                    reachAtl = true;
-                    break;
-                }
-                case 4:{
-                    continue;
-                }
-            }
+            cache[newY][newX].first |= cache[y][x].first;
+            cache[newY][newX].second |= cache[y][x].second;
 
-            if(reachAtl && reachPac){
-                break;
+
+            if(targetFirst != cache[newY][newX].first || targetSecond != cache[newY][newX].second){
+                rec(heights, cache, newY, newX);
             }
         }
-
-        path.erase(pos.first);
-
-        int thisRes = 0;
-        if(reachAtl && reachPac){
-             thisRes = 3;
-        }else if(reachPac){
-            thisRes = 1;
-        }else if (reachAtl){
-            thisRes = 2;
-        }else{
-            thisRes = 4;
-        }
-
-        if(!hasUnknown){
-            cache[y][x] = thisRes;
-        }
-
-        return thisRes;
     }
 };
 
