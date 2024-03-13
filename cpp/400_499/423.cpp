@@ -114,10 +114,6 @@ map<char, array<int,10> > charCoef =
         return ret;
 
     }
-
-    
-
-
 };
 
 int main(){
