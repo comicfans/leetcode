@@ -31,29 +31,38 @@ public:
 
         vector<vector<int>> ret;
 
-        vector<Node*> level;
-        if(root){
-            level.push_back(root);
-        }
+        int level = 0;
 
-        while(!level.empty()){
-            vector<Node*> nextLevel;
-            vector<int> thisLevel;
-            for(auto p: level){
-                if(!p){
-                    continue;
-                }
-                thisLevel.push_back(p->val);
-                for(auto c: p->children){
-                    nextLevel.push_back(c);
-                }
-            }
-            level.swap(nextLevel);
-            ret.push_back(thisLevel);
+        while(rec(ret, root, level, 0)){
+            ++level;
         }
 
         return ret;
+    }
 
-        
+    bool rec(vector<vector<int>> &ret, Node* root, int level, int current){
+
+        assert(level >= current);
+
+        if(!root){
+            return false;
+        }
+
+        if(level == current){
+            if((int)ret.size()<level+1){
+                assert((int)ret.size() == level );
+                ret.resize(ret.size()+1);
+            }
+
+            ret.back().push_back(root->val);
+            return true;
+        }
+
+        bool atLeastOne = false;
+        for(auto p: root->children){
+            atLeastOne |= rec(ret, p, level, current+1);
+        }
+
+        return atLeastOne;
     }
 };
