@@ -31,38 +31,25 @@ public:
 
         vector<vector<int>> ret;
 
-        int level = 0;
 
-        while(rec(ret, root, level, 0)){
-            ++level;
-        }
+        rec(ret, root, 0);
 
         return ret;
     }
 
-    bool rec(vector<vector<int>> &ret, Node* root, int level, int current){
-
-        assert(level >= current);
+    void rec(vector<vector<int>> &ret, Node* root, int current){
 
         if(!root){
-            return false;
+            return ;
         }
 
-        if(level == current){
-            if((int)ret.size()<level+1){
-                assert((int)ret.size() == level );
-                ret.resize(ret.size()+1);
-            }
-
-            ret.back().push_back(root->val);
-            return true;
+        if(ret.size() < current+1){
+            ret.resize(current+1);
         }
 
-        bool atLeastOne = false;
-        for(auto p: root->children){
-            atLeastOne |= rec(ret, p, level, current+1);
+        ret[current].push_back(root->val);
+        for(auto c: root->children){
+            rec(ret,c,current+1);
         }
-
-        return atLeastOne;
     }
 };
