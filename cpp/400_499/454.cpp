@@ -90,6 +90,13 @@ int main(){
         auto res = s.fourSumCount(nums1,nums2,nums3,nums4);
     }
     {
+        auto nums1 = pvi("454_case.txt", 4);
+        auto nums2 = pvi("454_case.txt", 5);
+        auto nums3 = pvi("454_case.txt", 6);
+        auto nums4 = pvi("454_case.txt", 7);
+        auto res = s.fourSumCount(nums1,nums2,nums3,nums4);
+    }
+    {
         VI nums1 = {-1,-1},nums2 = {-1,1},nums3={-1,1},nums4 = {1,-1};
         auto res = s.fourSumCount(nums1,nums2,nums3,nums4);
         assert(res == 6);
