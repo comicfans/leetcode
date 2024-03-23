@@ -357,3 +357,8 @@ std::pair<std::unique_ptr<TreeNode>, vector<TreeNode*>> pt(const string& tree){
 
     return std::move(std::pair<std::unique_ptr<TreeNode>, vector<TreeNode*>>{root.release(),vec});
 }
+
+typedef vector<int> VI;
+typedef vector<vector<int>> VVI;
+typedef vector<string> VS;
+typedef vector<vector<string>> VVS;
