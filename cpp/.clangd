@@ -1,2 +1,2 @@
 CompileFlags:                     # Tweak the parse settings
-  Add: [-DLEETCODE] 
+  Add: [-DLEETCODE, -std=c++20] 
