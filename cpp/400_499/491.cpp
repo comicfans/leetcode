@@ -1,6 +1,7 @@
 #include <cwchar>
 #include <vector>
 #include <cassert>
+#include <unordered_set>
 #include <string>
 #include <set>
 #include <map>
@@ -31,7 +32,7 @@ public:
 
         int prev = (chain.empty()?-101:chain.back());
 
-        set<int> tried ;
+        unordered_set<int> tried ;
         for(int tryPos = pos; tryPos < nums.size(); ++tryPos){
 
 
