@@ -1,4 +1,5 @@
 #include <vector>
+#include <execution>
 #include <cassert>
 #include <string>
 #include <set>
@@ -75,9 +76,15 @@ public:
 
             auto pos = lower_bound(minCount.begin(), minCount.end(),pair<int,int>{v,v}, lambda);
 
-            for(auto it = pos ; it != minCount.end(); ++it){
-                ret += it->second;
-            }
+
+
+            int thisSum = std::transform_reduce(pos, minCount.end(), 0, [](const auto& lhs, const auto& rhs){
+                return lhs + rhs;
+            },[](const auto& v){
+                                  return v.second;
+                                  });
+
+            ret+= thisSum;
 
             //3 -> 1
             //2 -> 0
