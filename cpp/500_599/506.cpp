@@ -10,9 +10,9 @@ class Solution {
 public:
     vector<string> findRelativeRanks(vector<int>& score) {
         
-        vector<pair<int,int> > order;
+        vector<pair<int,int> > order(score.size());
         for(int i = 0;i < score.size(); ++i){
-            order.push_back({score[i],i});
+            order[i] = {score[i],i};
         }
 
         sort(order.begin(),order.end(), [](const auto& lhs, const auto& rhs){
