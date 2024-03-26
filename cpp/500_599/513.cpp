@@ -21,36 +21,31 @@ class Solution {
 public:
     int findBottomLeftValue(TreeNode* root) {
 
-        auto res = rec(root, 0);
+        vector<TreeNode*> level = {root};
 
-        return res.second;
+
+        while(!level.empty()){
+
+            int res = level.front()->val;
+            vector<TreeNode*> next;
+            for(auto p: level){
+                if(p->left){
+                    next.push_back(p->left);
+                }
+                if(p->right){
+                    next.push_back(p->right);
+                }
+            }
+
+            if(next.empty()){
+                break;
+            }
+
+            swap(next, level);
+        }
+
+        return res;
     }
 
-    pair<int,int> rec(TreeNode* root, int level){
-
-        assert(root);
-
-
-        if(!root->left && !root->right){
-            return {level, root->val};
-        }
-
-        pair<int,int> right = {-1, 0};
-        if(root->right){
-            right = rec(root->right, level+1);
-        }
-
-        pair<int,int> left = {-1,0};
-        if(root->left){
-            left = rec(root->left, level+1);
-        }
-
-
-        if(left.first >= right.first){
-            return left;
-        }
-
-        return right;
-
-    }
+    
 };
