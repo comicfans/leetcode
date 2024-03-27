@@ -33,7 +33,7 @@ public:
 
             char thisChar = s[tryPos];
 
-            int rMatch = find(s.rbegin() + ((int)s.size() - revMatchEnd),  s.rbegin() + (revMatchEnd - tryPos), thisChar) - s.rbegin();
+            int rMatch = find(s.rbegin() + ((int)s.size() - revMatchEnd),  s.rbegin() + (s.size()-1 - tryPos), thisChar) - s.rbegin();
 
             rMatch = (int)s.size() - 1- rMatch;
 
