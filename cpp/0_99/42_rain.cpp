@@ -10,50 +10,28 @@ using namespace std;
 class Solution {
 public:
     int trap(vector<int>& height) {
+        vector<int> cummax(height.size());
 
-        if(height.size() < 3){
-            return 0;
+        int prev = 0;
+        for(int i = 0;i < height.size(); ++i){
+            cummax[i] = max(prev, height[i]);
+            prev = cummax[i];
         }
 
         int ret = 0;
-        map<int,int> thisUHeightCount;
-        int leftMax = height[0];
-        for(int i = 1;i<height.size();++i){
 
+        int rightCummax = height.back();
+        for(int i = 1;i< height.size()-1; ++i){
 
-            if(height[i]>= height[i-1]){
-                //do realize, or first
+            int leftHeight = cummax[height.size() - 1 -i];
+            int rightHeight = rightCummax;
 
-                int realizeHeight = min(leftMax, height[i]);
+            int minHeight = min(leftHeight, rightHeight);
 
-                vector<map<int,int>::iterator> toChange;
-                int changeNumber = 0;
-                for(auto it = thisUHeightCount.begin();it!= thisUHeightCount.end();++it){
-                    auto kv = *it;
-                    if(kv.first < realizeHeight){
-                        toChange.push_back(it);
-                        ret+= (realizeHeight - kv.first) * kv.second;
-                        changeNumber += kv.second;
-                    }
-                }
+            int delta = max(minHeight  - height[height.size()-1-i],0);
 
-                for(auto p : toChange){
-                    thisUHeightCount.erase(p);
-                }
-                thisUHeightCount[realizeHeight]+= changeNumber;
-
-
-
-                if(height[i] >= leftMax){
-                    thisUHeightCount.clear();
-                    leftMax = height[i];
-                }else{
-                    thisUHeightCount[height[i]]++;
-                }
-                continue;
-            }
-
-            thisUHeightCount[height[i]]++;
+            ret+=delta;
+            rightCummax = max(rightCummax, height[height.size()-1-i]);
         }
 
         return ret;
@@ -62,7 +40,8 @@ public:
 
 };
 
-#include "parse.h"
+#ifdef LEETCODE
+#include "../parse.h"
 int main(){
 
     Solution s;
@@ -91,3 +70,4 @@ int main(){
     
     
 }
+#endif
