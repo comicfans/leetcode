@@ -9,65 +9,45 @@ using namespace std;
 class Solution {
 public:
     int longestMonotonicSubarray(vector<int>& nums) {
-        int  inc = longestMonotonicSubarray1(nums);
-        int  dec  = longestMonotonicSubarray2(nums);
-        return max(inc,dec);
-    }
-    int longestMonotonicSubarray1(vector<int>& nums) {
 
-        vector<int> cache(nums.size());
+        int maxInc = 1;
+        int maxDec = 1;
 
-        int incBest = 1;
+        int currentInc = 1;
+        int currentDec = 1;
 
-        for(int idx = 0; idx < nums.size(); ++idx){
-            if(idx == 0){
-                incBest = recInc(nums[0],nums, 1, cache)+1;
+
+        for(int i = 1;i < nums.size(); ++i){
+            int v = nums[i];
+
+            if(v == nums[i-1]){
+                maxInc = max(maxInc, currentInc);
+                maxDec = max(maxDec, currentDec);
+                currentInc = 1;
+                currentDec = 1;
                 continue;
             }
 
+            if(v > nums[i-1]){
+                ++currentInc;
 
-            int thisBest = 0;
-            if(cache[idx] != 0){
-                thisBest = cache[idx];
-            }else{
-                thisBest = recInc(nums[idx],nums,idx+1, cache)+1;
-            }
-
-
-            incBest = max(incBest, thisBest);
-        }
-
-        return incBest;
-
-    }
-
-    int longestMonotonicSubarray2(vector<int>& nums) {
-
-        vector<int> cache(nums.size());
-
-        int decBest = 1;
-
-        for(int idx = 0; idx < nums.size(); ++idx){
-            if(idx == 0){
-                decBest = recDec(nums[0],nums, 1, cache)+1;
+                maxDec = max(maxDec, currentDec);
+                currentDec = 1;
                 continue;
             }
 
-            
-
-            int thisBest = 0;
-            if(cache[idx] != 0){
-                thisBest = cache[idx];
-            }else{
-                thisBest = recDec(nums[idx],nums,idx+1, cache)+1;
-            }
-
-
-            decBest= max(decBest, thisBest);
+            ++currentDec;
+            maxInc = max(maxInc, currentInc);
+            currentInc = 1;
         }
 
-        return decBest;
+        maxInc = max(maxInc, currentInc);
+        maxDec = max(maxDec, currentDec);
+
+        return max(maxInc,maxDec);
     }
+
+   
 
     int recDec(int prev, const vector<int>& nums, int idx, vector<int>& cache){
 
