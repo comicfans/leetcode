@@ -16,10 +16,15 @@ public:
 
             int v = i+1;
 
+            bool atLeastOne = false;
             for(int j = 1; j<=n; ++j){
                 if(j % v == 0 || v % j == 0){
                     possible[i].insert(j);
+                    atLeastOne = true;
                 }
+            }
+            if(!atLeastOne){
+                return 0;
             }
         }
 
