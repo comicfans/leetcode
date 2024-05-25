@@ -17,12 +17,17 @@ public:
     int findPermutationDifference(string s, string t) {
 
         int ret = 0;
+        int idx[26];
         for(int i = 0;i<s.size(); ++i){
 
-            int pos = t.find(s[i]);
-
-            ret += abs(pos - i);
+            idx[s[i] - 'a'] = i;
         }
+
+        for(int i = 0;i<s.size(); ++i){
+
+            ret += abs(i - idx[t[i] - 'a']);
+        }
+
 
         return ret;
 
