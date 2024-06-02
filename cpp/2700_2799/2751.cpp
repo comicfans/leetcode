@@ -46,7 +46,7 @@ public:
 
             auto& current = infos[current_pos];
 
-            if ((current.dir == last_survived.dir) | (current.dir == 'R')){
+            if ((current.dir == last_survived.dir) || (current.dir == 'R')){
                 last_survived_pos = current_pos;
                 ++current_pos;
                 continue;
