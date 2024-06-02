@@ -36,7 +36,7 @@ public:
         continue;
       }
 
-      end = max(thisSegment[1],end);
+      end = max(thisSegment[1], end);
     }
 
     int meet = end - start + 1;

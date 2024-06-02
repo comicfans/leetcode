@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 using namespace std;
 
 #ifdef LEETCODE
@@ -15,22 +14,21 @@ using namespace std;
 // jj
 class Solution {
 public:
-    int minimumChairs(string s) {
-        int count = 0;
-        int res = 0;
-        for(auto ch:s){
-            if(ch == 'E'){
-                ++count;
-                res = max(count,res);
-            }
-            if(ch == 'L'){
-                --count;
-            }
-        }
-
-        return res;
-        
+  int minimumChairs(string s) {
+    int count = 0;
+    int res = 0;
+    for (auto ch : s) {
+      if (ch == 'E') {
+        ++count;
+        res = max(count, res);
+      }
+      if (ch == 'L') {
+        --count;
+      }
     }
+
+    return res;
+  }
 };
 
 #ifdef LEETCODE
