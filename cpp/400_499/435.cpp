@@ -57,7 +57,7 @@ public:
     }
 };
 
-#include "parse.h"
+#include "../parse.h"
 
 int main(){
     Solution s;
