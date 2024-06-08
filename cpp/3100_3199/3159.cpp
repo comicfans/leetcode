@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 using namespace std;
 
 #ifdef LEETCODE
@@ -17,21 +16,24 @@ public:
   vector<int> occurrencesOfElement(vector<int> &nums, vector<int> &queries,
                                    int x) {
 
-    if (queries.empty()) {
-      return {};
-    }
+    vector<int> ret(queries.size(), -1);
+
     vector<int> pos;
-    for (int i = 0; i < nums.size(); ++i) {
-      if (nums[i] == x) {
-        pos.push_back(i);
-      }
-    }
-    vector<int> ret(queries.size());
+    int lastPos = -1;
     for (int i = 0; i < queries.size(); ++i) {
-      if (queries[i] - 1 >= pos.size()) {
-        ret[i] = -1;
-      } else {
-        ret[i] = pos[queries[i] - 1];
+      int q = queries[i];
+      while ((lastPos < (int)nums.size()) && (q > pos.size())) {
+        ++lastPos;
+        if (lastPos == nums.size()) {
+          break;
+        }
+        if (nums[lastPos] == x) {
+          pos.push_back(lastPos);
+        }
+      }
+
+      if (q - 1 < pos.size()) {
+        ret[i] = pos[q - 1];
       }
     }
 
@@ -45,8 +47,12 @@ public:
 int main() {
   Solution s;
   {
-    // VI = {};
-    // VVI = {};
+    VI nums = {1, 3, 1, 7}, queries = {1, 3, 2, 4};
+    int x = 1;
+    auto res = s.occurrencesOfElement(nums, queries, x);
+
+    VI expect = {0, -1, 2, -1};
+    assert(res == expect);
   }
   {
     // VI = {};
