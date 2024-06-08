@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <map>
+#include <numeric>
 #include <set>
 #include <string>
 #include <vector>
@@ -15,34 +16,35 @@ using namespace std;
 class Solution {
 public:
   int maxPointsInsideSquare(vector<vector<int>> &points, string s) {
-    vector<pair<int, char>> ordered;
+    vector<pair<int, char>> ordered(points.size());
 
     for (int i = 0; i < points.size(); ++i) {
       int minHalf = max(abs(points[i][0]), abs(points[i][1]));
 
-      ordered.push_back({minHalf, s[i]});
+      ordered[i] = {minHalf, s[i]};
     }
     sort(ordered.begin(), ordered.end());
 
-    set<char> reached;
+    bool reached[26] = {0};
     for (int i = 0; i < ordered.size();) {
-      auto end = upper_bound(ordered.begin() + i, ordered.end(),
-                             make_pair(ordered[i].first, 'z')) -
-                 ordered.begin();
-      set<char> stage;
+      const auto end_idx = upper_bound(ordered.begin() + i, ordered.end(),
+                                       make_pair(ordered[i].first, 'z')) -
+                           ordered.begin();
 
-      for (int j = i; j < end; ++j) {
+      string stage_container;
+      for (int j = i; j < end_idx; ++j) {
         char thisChar = ordered[j].second;
-        if (reached.count(thisChar) || stage.count(thisChar)) {
-          return reached.size();
+        int charIdx = thisChar - 'a';
+        if (reached[charIdx]) {
+          int walked = j - i;
+          return std::accumulate(begin(reached), end(reached), 0) - walked;
         }
-        stage.insert(thisChar);
+        reached[charIdx] = true;
       }
 
-      copy(stage.begin(), stage.end(), inserter(reached, reached.end()));
-      i = end;
+      i = end_idx;
     }
-    return reached.size();
+    return std::accumulate(begin(reached), end(reached), 0);
   }
 };
 
