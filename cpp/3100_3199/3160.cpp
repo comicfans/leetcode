@@ -21,6 +21,7 @@ public:
 
     vector<int> ret(queries.size());
     unordered_map<int, int> color_count;
+    int count = 0;
     for (int i = 0; i < queries.size(); ++i) {
       const int ball = queries[i][0];
       const int color = queries[i][1];
@@ -36,13 +37,17 @@ public:
         auto pos = color_count.find(prev_color);
         --pos->second;
         if (pos->second == 0) {
-          color_count.erase(pos);
+          --count;
         }
       }
 
-      color_count[color]++;
+      auto &new_color_count = color_count[color];
+      if (new_color_count == 0) {
+        ++count;
+      }
+      new_color_count++;
       ball_color[ball] = color;
-      ret[i] = color_count.size();
+      ret[i] = count;
     }
 
     return ret;
