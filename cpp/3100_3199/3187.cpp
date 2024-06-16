@@ -44,12 +44,12 @@ public:
     vector<int> ret;
     for (const auto &q : queries) {
       if (q[0] == 1) {
-
-        int temp = cum_count[q[2]] - cum_count[q[1]];
-        if (temp != 0 && q[0] != q[1] && q[1] != cum_count.size() - 1 &&
-            cum_count[q[1]] != cum_count[q[1] + 1]) {
-          --temp;
+        if (q[2] - q[1] <= 1) {
+          ret.push_back(0);
+          continue;
         }
+
+        int temp = cum_count[q[2]] - cum_count[q[1] + 1];
 
         ret.push_back(temp);
         continue;
@@ -58,13 +58,17 @@ public:
       auto idx = q[1];
       auto v = q[2];
 
-      auto gen = [&nums, idx](int center) {
-        vector<int> temp_old(5);
-        temp_old[2] = center;
-        temp_old[1] = idx > 0 ? nums[idx - 1] : temp_old[2];
-        temp_old[0] = idx > 1 ? nums[idx - 2] : temp_old[1];
-        temp_old[3] = idx < nums.size() - 1 ? nums[idx + 1] : temp_old[2];
-        temp_old[4] = idx < nums.size() - 2 ? nums[idx + 2] : temp_old[2];
+      const int center_idx = min(idx, 2);
+      auto gen = [&nums, idx, center_idx](auto center) {
+        const int after_number = min((int)nums.size() - 1 - idx, 2);
+        vector<int> temp_old(center_idx + 1 + after_number);
+
+        copy(nums.begin() + idx - center_idx, nums.begin() + idx,
+             temp_old.begin());
+        temp_old[center_idx] = center;
+        copy(nums.begin() + idx + 1, nums.begin() + idx + 1 + after_number,
+             temp_old.begin() + center_idx + 1);
+
         return temp_old;
       };
 
@@ -74,17 +78,18 @@ public:
       auto cum_new = cum(temp_new);
 
       int cum_change = 0;
-      for (int delta = -1; delta <= 1; ++delta) {
+      for (int delta = -1; delta <= 2; ++delta) {
         if (idx + delta < 0 || idx + delta > nums.size() - 1) {
           continue;
         }
-        cum_change += (cum_new[1 + delta] - cum_old[1 + delta]);
+        cum_change = cum_new[center_idx + delta] - cum_old[center_idx + delta];
         cum_count[idx + delta] += cum_change;
       }
       if (cum_change == 0) {
+        nums[idx] = v;
         continue;
       }
-      for (int i = idx + 2; i < nums.size(); ++i) {
+      for (int i = idx + 3; i < nums.size(); ++i) {
         cum_count[i] += cum_change;
       }
       nums[idx] = v;
@@ -99,6 +104,24 @@ public:
 #ifdef LEETCODE
 int main() {
   Solution s;
+  {
+    VI input = {4, 9, 4, 10, 7};
+    VVI queries = {{2, 3, 2}, {2, 1, 3}, {1, 2, 3}};
+    auto res = s.countOfPeaks(input, queries);
+  }
+  {
+    VI input = {8, 7, 10};
+    VVI queries = {{1, 1, 1}, {2, 2, 4}, {1, 0, 1}, {2, 1, 9}, {1, 0, 2}};
+    auto res = s.countOfPeaks(input, queries);
+    VI expect = {0, 0, 1};
+    assert(res == expect);
+  }
+  {
+    VI input = {5, 6, 4, 5};
+    VVI queries = {{2, 3, 9}, {1, 0, 2}, {1, 3, 3}};
+
+    auto res = s.countOfPeaks(input, queries);
+  }
 
   {
     VI input = {8, 10, 10, 9, 10};
