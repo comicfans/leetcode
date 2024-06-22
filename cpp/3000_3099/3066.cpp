@@ -16,18 +16,31 @@ class Solution {
 public:
   int minOperations(vector<int> &nums, int k) {
 
-    multiset<int64_t> sorted(nums.begin(), nums.end());
+    multiset<int64_t> sorted;
 
+    for (auto v : nums) {
+      if (v < k) {
+        sorted.insert(v);
+      }
+    }
     int step = 0;
-    while (*sorted.begin() < k) {
+    while (*sorted.begin() < k && sorted.size() > 0) {
+
+      if (sorted.size() == 1) {
+        ++step;
+        break;
+      }
+
       auto pos0 = sorted.begin();
       int64_t v0 = *pos0;
       sorted.erase(sorted.begin());
       int64_t v1 = *sorted.begin();
       sorted.erase(sorted.begin());
       auto added = v0 * 2 + v1;
-      sorted.insert(added);
       ++step;
+      if (added < k) {
+        sorted.insert(added);
+      }
     }
 
     return step;
