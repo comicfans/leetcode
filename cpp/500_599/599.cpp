@@ -16,6 +16,10 @@ class Solution {
 public:
   vector<string> findRestaurant(vector<string> &list1, vector<string> &list2) {
 
+    if (list2.size() < list1.size()) {
+      swap(list1, list2);
+    }
+
     unordered_map<string, int> idx1;
 
     for (auto i = 0; i < list1.size(); ++i) {
