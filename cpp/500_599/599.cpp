@@ -16,23 +16,21 @@ class Solution {
 public:
   vector<string> findRestaurant(vector<string> &list1, vector<string> &list2) {
 
-    unordered_map<string, int> idx1, idx2;
+    unordered_map<string, int> idx1;
+
     for (auto i = 0; i < list1.size(); ++i) {
       idx1[list1[i]] = i;
-    }
-    for (auto i = 0; i < list2.size(); ++i) {
-      idx2[list2[i]] = i;
     }
 
     unordered_map<string, int> least;
     int least_sum = INT_MAX;
-    for (const auto &[str, idx] : idx1) {
-      auto pos2 = idx2.find(str);
-      if (pos2 == idx2.end()) {
+    for (auto idx2 = 0; idx2 < list2.size(); ++idx2) {
+      auto pos1 = idx1.find(list2[idx2]);
+      if (pos1 == idx1.end()) {
         continue;
       }
-      int this_sum = idx + pos2->second;
-      least[str] = this_sum;
+      int this_sum = idx2 + pos1->second;
+      least[list2[idx2]] = this_sum;
       least_sum = min(least_sum, this_sum);
     }
     vector<string> ret;
