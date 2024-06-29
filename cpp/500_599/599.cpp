@@ -20,7 +20,7 @@ public:
     for (auto i = 0; i < list1.size(); ++i) {
       idx1[list1[i]] = i;
     }
-    for (auto i = 0; i < list1.size(); ++i) {
+    for (auto i = 0; i < list2.size(); ++i) {
       idx2[list2[i]] = i;
     }
 
@@ -49,10 +49,16 @@ public:
 int main() {
   Solution s;
   {
+    vector<string> l1 = {"happy", "sad", "good"};
+    vector<string> l2 = {"sad", "happy", "good"};
+    auto res = s.findRestaurant(l1, l2);
     // VI = {};
     // VVI = {};
   }
   {
+    vector<string> l1 = {"Shogun", "Tapioca Express", "Burger King", "KFC"};
+    vector<string> l2 = {"KFC", "Shogun", "Burger King"};
+    auto res = s.findRestaurant(l1, l2);
     // VI = {};
     // VVI = {};
   }
